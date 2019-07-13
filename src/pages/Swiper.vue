@@ -1,21 +1,17 @@
 <template>
-  <div class="wrapper">
+  <div id="certify">
     <swiper :options="swiperOption" v-if="showSwiper">
-    <!-- slides -->
-    <swiper-slide v-for="item in list" :key="item.id">
-      <img class="swiper-img" :src="item.thumb">
-    </swiper-slide>
-    <!-- <swiper-slide>I'm Slide 3</swiper-slide>
-    <swiper-slide>I'm Slide 4</swiper-slide>
-    <swiper-slide>I'm Slide 5</swiper-slide>
-    <swiper-slide>I'm Slide 6</swiper-slide>
-    <swiper-slide>I'm Slide 7</swiper-slide> -->
-    <!-- Optional controls -->
-    <div class="swiper-pagination"  slot="pagination"></div> <!--这个是拿来做按钮区的 -->
-    <!-- <div class="swiper-button-prev" slot="button-prev"></div>
-    <div class="swiper-button-next" slot="button-next"></div>  左右箭头 这里不需要-->
-    <!-- <div class="swiper-scrollbar"   slot="scrollbar"></div> 显示滚动条的 这不需要 -->
+      <swiper-slide v-for="item in list" :key="item.id">
+        <img class="swiper-img" :src="item.thumb">
+      </swiper-slide>
+      <div class="swiper-pagination" slot="pagination"></div>
+      <div class="swiper-button-prev" slot="button-prev"></div>
+      <div class="swiper-button-next" slot="button-next"></div>
     </swiper>
+    <div class="time">0.48</div>
+    <div class="operation">
+      <button class="left" @click="click_preview">预览</button><button class="right" @click="click_record">录制</button>
+    </div>
   </div>
 </template>
 
@@ -34,35 +30,40 @@ export default {
         loop: true,
         loopedSlides: 5,
         // autoplay: true,
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev',
+        },
         pagination: {
-            el: '.swiper-pagination',
-            clickable: true,
-            type : 'fraction'
+          el: '.swiper-pagination',
+          clickable :true
         },
         on: {
           progress: function(progress) {
-              for (i = 0; i < this.slides.length; i++) {
-                  var slide = this.slides.eq(i);
-                  var slideProgress = this.slides[i].progress;
-                  modify = 1;
-                  if (Math.abs(slideProgress) > 1) {
-                      modify = (Math.abs(slideProgress) - 1) * 0.3 + 1;
-                  }
-                  translate = slideProgress * modify * 260 + 'px';
-                  scale = 1 - Math.abs(slideProgress) / 5;
-                  zIndex = 999 - Math.abs(Math.round(10 * slideProgress));
-                  slide.transform('translateX(' + translate + ') scale(' + scale + ')');
-                  slide.css('zIndex', zIndex);
-                  slide.css('opacity', 1);
-                  if (Math.abs(slideProgress) > 3) {
-                      slide.css('opacity', 0);
-                  }
+            for (i = 0; i < this.slides.length; i++) {
+              var slide = this.slides.eq(i);
+              var slideProgress = this.slides[i].progress;
+              modify = 1;
+              if (Math.abs(slideProgress) > 1) {
+                modify = (Math.abs(slideProgress) - 1) * 0.3 + 1;
               }
+              translate = slideProgress * modify * 260 + 'px';
+              scale = 1 - Math.abs(slideProgress) / 5;
+              zIndex = 999 - Math.abs(Math.round(10 * slideProgress));
+              slide.transform('translateX(' + translate + ') scale(' + scale + ')');
+              slide.css('zIndex', zIndex);
+              slide.css('opacity', 1);
+              if (Math.abs(slideProgress) > 3) {
+                slide.css('opacity', 0);
+              }
+            }
           },
           setTransition: function(transition) {
-              for (var i = 0; i < this.slides.length; i++) {
-                  var slide = this.slides.eq(i) slide.transition(transition);
-              }
+            for (var i = 0; i < this.slides.length; i++) {
+              var slide = this.slides.eq(i)
+              slide.transition(transition);
+            }
+
           }
         }
       }
@@ -75,19 +76,141 @@ export default {
     showSwiper () {
       return this.list.length
     }
+  },
+  methods: {
+    click_preview() {
+      this.$emit('click_preview')
+    },
+    click_record() {
+      this.$emit('click_record')
+    }
   }
 }
 </script>
 
 <style lang="stylus" scoped>
   .wrapper >>> .swiper-pagination-bullet-active
-    background-color: #fff
-  .wrapper
-    margin-top 2.7rem
-    width 9.22rem
-    // height 5.77rem
-    border 1px solid red
-    .swiper-img
-      width 100%
-      height 5.77rem
+    background-color: red
+  #certify {
+    position: fixed;
+    top: 3.2rem;
+    width: 16.37rem;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    .time {
+      display: block;
+      position: absolute;
+      margin-top: 1.9rem;
+      width: 1.3rem;
+      height: 1.3rem;
+      line-height: 1.3rem;
+      text-align: center;
+      z-index: 999;
+      opacity: 0.8;
+      border-radius: 1.3rem;
+      background-color: #fff;
+      color: #17D7C5;
+      font-size: 0.3rem;
+    }
+    .operation {
+      width: 4.8rem;
+      position: absolute;
+      bottom: 0.6rem;
+      z-index: 999;
+      background-color: #17D7C5;
+      font-size: 0.3rem;
+      border-top-left-radius: 0.25rem;
+      border-top-right-radius: 0.25rem;
+      opacity: 0.8;
+      button {
+        display: inline-block;
+        text-align: center;
+        line-height: 0.7rem;
+        width: 2.4rem;
+        height: 0.7rem;
+        background-color: #00A293;
+        box-sizing: border-box;
+      }
+      .left {
+        border-top-left-radius: 0.25rem;
+        border-right: 1px solid rgba(23,215,197,1);
+      }
+      .right {
+        border-top-right-radius: 0.25rem;
+      }
+    }
+  }
+
+  #certify .swiper-container {
+    padding-bottom: 0.6rem;
+
+  }
+  #certify  .swiper-slide {
+    width: 520px;
+    height: 408px;
+    background: #fff;
+    box-shadow: 0 8px 30px #ddd;
+  }
+
+  #certify  .swiper-slide img{
+    display:block;
+    width: 100%;
+    height: 100%;
+  }
+  #certify  .swiper-slide p {
+    line-height: 98px;
+    padding-top: 0;
+    text-align: center;
+    color: #636363;
+    font-size: 1.1em;
+    margin: 0;
+  }
+
+  #certify .swiper-pagination {
+    width: 100%;
+    bottom: 20px;
+  }
+
+  #certify .swiper-pagination-bullets .swiper-pagination-bullet {
+    margin: 0 5px;
+    border: 3px solid #fff;
+    background-color: #d5d5d5;
+    width: 10px;
+    height: 10px;
+    opacity: 1;
+  }
+
+  #certify .swiper-pagination-bullets .swiper-pagination-bullet-active {
+    border: 3px solid #00aadc;
+    background-color: #fff;
+  }
+
+  #certify .swiper-button-prev {
+    left: -30px;
+    width: 45px;
+    height: 45px;
+    background: url('../assets/wm_button_icon.png') no-repeat;
+    background-position: 0 0;
+    background-size: 100%;
+  }
+
+  #certify .swiper-button-prev:hover {
+    background-position: 0 -46px;
+    background-size: 100%
+  }
+
+  #certify .swiper-button-next {
+    right: -30px;
+    width: 45px;
+    height: 45px;
+    background: url('../assets/wm_button_icon.png') no-repeat;
+    background-position: 0 -93px;
+    background-size: 100%;
+  }
+
+  #certify .swiper-button-next:hover {
+    background-position: 0 -139px;
+    background-size: 100%
+  }
 </style>
