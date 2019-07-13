@@ -93,7 +93,7 @@ export default {
     background-color: red
   #certify {
     position: fixed;
-    top: 3.2rem;
+    top: 3.15rem;
     width: 16.37rem;
     display: flex;
     justify-content: center;
@@ -119,10 +119,10 @@ export default {
       bottom: 0.6rem;
       z-index: 999;
       background-color: #17D7C5;
-      font-size: 0.3rem;
+      font-size: 0.26rem;
       border-top-left-radius: 0.25rem;
       border-top-right-radius: 0.25rem;
-      opacity: 0.8;
+      opacity: 0.65;
       button {
         display: inline-block;
         text-align: center;

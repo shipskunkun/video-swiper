@@ -1,16 +1,33 @@
+<!--首页1，预览2，全屏录制3，上传进度条4，二维码5，预览合成6-->
 <template>
     <div class="container">
         <div class="background-pic"></div>
-        <div v-if="current_step == 1">
+        <!--点击预览、录制前-->
+        <template v-if="current_step == 1">
             <home-swiper :list="swiperList" @click_preview="clickPreview" @click_record="clickRecord"></home-swiper>
-            <div class="out_time">04:58</div>
-        </div>
+        </template>
+
+        <!--预览或完成录制 2 或 6-->
+        <template v-if="current_step == 2 || current_step == 6">
+          <div class="vedio">
+            <video></video>
+            <button v-if="current_step == 2">录制</button>
+            <div class="two_button" v-if="current_step == 6">
+              <button class="left" @click="button_left">预览合成</button><button class="right" @click="button_right">完成录制</button>
+            </div>
+          </div>
+          <div class="out_time">04:58</div>
+        </template>
+
+        <!--上传进度-->
         <div class="step_upload" v-if="current_step == 4">
             <div class="progress">
                 <img src="../assets/progress.png"></img>
             </div>
             <div>Loding 50% completed</div>
         </div>
+
+         <!--上传成功，显示二维码-->
         <div class="step_code" v-if="current_step == 5">
             <div class="code_image">
             </div>
@@ -19,7 +36,8 @@
                 <p>还请尽快下载，视频只能保存7日下载源</p>
             </div>
         </div>
-        <div class="button" @click="buttonClick">{{ buttonText }}</div>
+
+        <button v-if="current_step == 2 ||current_step == 5 || current_step == 6" class="button" @click="buttonClick">{{ buttonText }}</button>
     </div>
 </template>
 
@@ -90,17 +108,22 @@ export default {
     }
   },
   methods: {
+    button_left() {
+      console.log('点我了,1')
+    },
+    button_right() {
+       console.log('点我了,2')
+    },
     buttonClick() {
-      //退出预览
-      if(this.current_step == 2) {
         this.current_step = 1;
-      }
     },
     clickPreview() {
       this.current_step = 2;
       console.log('点击我了');
     },
     clickRecord() {
+      this.$router.push({ path: '/record' })
+
       // this.current_step =
       console.log('点击右边')
     },
@@ -141,6 +164,55 @@ export default {
     position: relative;
     display: flex;
     justify-content: center;
+    .vedio {
+      position: fixed;
+      background-color: #fff;
+      margin-top: 3.15rem;
+      width: 9.22rem;
+      height: 5.2rem;
+      border-radius: .25rem;
+      .two_button {
+        width: 4.8rem;
+        position: absolute;
+        left: 50%;
+        margin-left: -2.4rem;
+        bottom: 0;
+        font-size: 0.26rem;
+        border-top-left-radius: 0.25rem;
+        border-top-right-radius: 0.25rem;
+        opacity: 0.4;
+        button {
+          display: inline-block;
+          text-align: center;
+          line-height: 0.7rem;
+          width: 2.4rem;
+          height: 0.7rem;
+          background-color: rgba(255,209,67,50);
+          box-sizing: border-box;
+        }
+        .left {
+          border-top-left-radius: 0.25rem;
+          border-right: 1px solid rgba(255,209,67,1);
+        }
+        .right {
+          border-top-right-radius: 0.25rem;
+        }
+      }
+      & > button {
+        opacity: 0.65;
+        position: absolute;
+        bottom: 0;
+        margin: 0 auto;
+        width: 3rem;
+        left: 50%;
+        margin-left: -1.5rem;
+        height: 0.7rem;
+        background-color: #fff;
+        border-top-left-radius: 0.25rem;
+        border-top-right-radius: 0.25rem;
+        background-color: #00A293;
+      }
+    }
     .out_time {
       position: fixed;
       font-size: 0.48rem;
@@ -158,6 +230,7 @@ export default {
       text-align: center;
       height: 0.5rem;
       line-height: 0.5rem;
+      background-color: #00A293;
     }
   }
   .step_code {
@@ -205,7 +278,7 @@ export default {
     }
   }
   .background-pic{
-    background: url('~@/assets/bg.png') no-repeat center center;
+    // background: url('~@/assets/bg.png') no-repeat center center;
     // background-size:cover;
     background-size: 100% 100%;
     background-attachment: fixed;
@@ -216,6 +289,7 @@ export default {
     left:0;
     right:0;
     bottom:0;
+    z-index:-999;
 }
 
 
