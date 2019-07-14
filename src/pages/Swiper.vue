@@ -1,6 +1,6 @@
 <template>
   <div id="certify">
-    <swiper :options="swiperOption">
+    <swiper :options="swiperOption" v-if="showSwiper">
       <swiper-slide v-for="item in list" :key="item.id">
         <img class="swiper-img" :src="item.thumb">
       </swiper-slide>
@@ -19,6 +19,7 @@
 </template>
 
 <script>
+var  realIndex = 0;
 export default {
   name: 'HomeSwiper',
   props: {
@@ -34,6 +35,7 @@ export default {
   },
   data () {
     return {
+      realIndex: 0,
       swiperOption: {
         // slidesPerView: 3,
         // spaceBetween: 30,
@@ -45,7 +47,7 @@ export default {
         centeredSlides: true,
         loop: true,
         loopedSlides: 5,
-        autoplay: true,
+        // autoplay: true,
         pagination: {
           el: '.swiper-pagination',
           clickable: true
@@ -55,6 +57,10 @@ export default {
           prevEl: '.swiper-button-prev'
         },
         on: {
+          slideChangeTransitionEnd: function(){
+            console.log(this.realIndex)
+            realIndex = this.realIndex;
+          },
           progress: function(progress) {
             for (let i = 0; i < this.slides.length; i++) {
               var slide = this.slides.eq(i);
@@ -94,7 +100,7 @@ export default {
   },
   methods: {
     click_preview() {
-      this.$emit('click_preview')
+      this.$emit('click_preview', realIndex)
     },
     click_record() {
       this.$emit('click_record')

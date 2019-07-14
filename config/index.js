@@ -10,15 +10,15 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {
-      '/api': {
-        target: 'http://meeting-front.hunterslab.cn',
-        changeOrigin:true,//允许跨域
-        pathRewrite: {
-          '^/api': '/static/mock'
-        }
-      }
-    },
+    // proxyTable: {
+    //   '/': {
+    //     target: 'http://localhost:8080',
+    //     changeOrigin:true,//允许跨域
+    //     pathRewrite: {
+    //       '^/': '/static/mock'
+    //     }
+    //   }
+    // },
 
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST

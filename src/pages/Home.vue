@@ -10,7 +10,8 @@
         <!--预览或完成录制 2 或 6-->
         <template v-if="current_step == 2 || current_step == 6">
           <div class="vedio">
-            <video></video>
+            <video :src="swiperList[current_index].url" controls="controls" autoplay>
+            </video>
             <button v-if="current_step == 2">录制</button>
             <div class="two_button" v-if="current_step == 6">
               <button class="left" @click="button_left">预览合成</button><button class="right" @click="button_right">完成录制</button>
@@ -42,69 +43,21 @@
 </template>
 
 <script>
-import HomeSwiper from './Swiper'
 import axios from 'axios'
+import HomeSwiper from './Swiper'
+import { getlist } from '@/testServer.js'
 
 export default {
   name: 'Home',
   components: {
     HomeSwiper
   },
-  data () {
+  data() {
     return {
       current_step: 1,
+      current_index: 0,
       buttonText: '返回首页',
-      swiperList: [{
-        "id": "0001",
-        "file": "/xxx/xxx/xxx.mp4", // 模板视频文件
-        "duration": 30170, // 时长，单位毫秒
-        "title": "标题",
-        "thumb": "https://imgs.qunarzz.com/p/tts6/1804/76/e21a1f848db63302.jpg_r_390x260x90_c4873f7a.jpg", // 展示缩略图
-        "description": "描述",
-        "url": "http://xxx/xxx/xxx/xxx.mp4" // 模板预览地址
-      }, {
-        "id": "0002",
-        "file": "/xxx/xxx/xxx.mp4", // 模板视频文件
-        "duration": 30170, // 时长，单位毫秒
-        "title": "标题",
-        "thumb": "https://imgs.qunarzz.com/vs_ceph_vs_tts/edfa46e6-43e8-4026-9ca9-9bf5b9edee68.jpg_r_390x260x90_dd5071be.jpg", // 展示缩略图
-        "description": "描述",
-        "url": "http://xxx/xxx/xxx/xxx.mp4" // 模板预览地址
-      },{
-        "id": "0003",
-        "file": "/xxx/xxx/xxx.mp4", // 模板视频文件
-        "duration": 30170, // 时长，单位毫秒
-        "title": "标题",
-        "thumb": "http://img1.qunarzz.com/piao/fusion/1810/29/45722c73b5b66902.jpg_750x200_231ae61f.jpg", // 展示缩略图
-        "description": "描述",
-        "url": "http://xxx/xxx/xxx/xxx.mp4" // 模板预览地址
-      }, {
-        "id": "0004",
-        "file": "/xxx/xxx/xxx.mp4", // 模板视频文件
-        "duration": 30170, // 时长，单位毫秒
-        "title": "标题",
-        "thumb": "https://imgs.qunarzz.com/vs_ceph_vs_tts/09d88886-934e-4188-a117-45e190c7b842.jpg_r_390x260x90_11da6675.jpg", // 展示缩略图
-        "description": "描述",
-        "url": "http://xxx/xxx/xxx/xxx.mp4" // 模板预览地址
-      },
-      {
-        "id": "0005",
-        "file": "/xxx/xxx/xxx.mp4", // 模板视频文件
-        "duration": 30170, // 时长，单位毫秒
-        "title": "标题",
-        "thumb": "https://imgs.qunarzz.com/p/tts5/1808/81/915df9066af34302.jpg_r_390x260x90_7975908a.jpg", // 展示缩略图
-        "description": "描述",
-        "url": "http://xxx/xxx/xxx/xxx.mp4" // 模板预览地址
-      },
-      {
-        "id": "0006",
-        "file": "/xxx/xxx/xxx.mp4", // 模板视频文件
-        "duration": 30170, // 时长，单位毫秒
-        "title": "标题",
-        "thumb": "https://imgs.qunarzz.com/vs_ceph_vs_tts/78774de0-ec03-4ff7-9e39-5a1267f0029c.jpg_r_390x260x90_f349ed35.jpg", // 展示缩略图
-        "description": "描述",
-        "url": "http://xxx/xxx/xxx/xxx.mp4" // 模板预览地址
-      }]
+      swiperList: []
     }
   },
   methods: {
@@ -112,58 +65,43 @@ export default {
       console.log('点我了,1')
     },
     button_right() {
-       console.log('点我了,2')
+      console.log('点我了,2')
     },
     buttonClick() {
-        this.current_step = 1;
+      this.current_step = 1;
     },
-    clickPreview() {
+    clickPreview(val) {
       this.current_step = 2;
-      console.log('点击我了');
+      // 当前是第几张
+      this.current_index = val;
     },
     clickRecord() {
-      this.$router.push({ path: '/record' })
+      this.$router.push({
+        path: '/record'
+      })
 
       // this.current_step =
       console.log('点击右边')
     },
-    getHomeInfo () {
-      //  用axios请求ajax数据
-      // axios.get('/api/index.json?city=' + this.city)
-      axios.get('/static/mock/index.json?city=' + this.city)
-        .then((result) => {
-          this.getHomeInfoSucc(result)
-        }).catch((err) => {
-          console.log(`请求数据出错: ${err}`)
-        })
-      // 用fetch请求ajax数据
-      // fetch('/api/index.json')
-      //   .then(data => data.json())
-      //   .then(res => this.getHomeInfoSucc(res))
-      //   .catch(err => console.log(`请求数据出错：${err}`))
+    getSwiperList() {
+      getlist().then(res => {
+        this.swiperList = res.data || [];
+      }).catch(err => {
+        //提示错误
+      })
     }
   },
   watch: {
-      current_step(val) {
-        if(val == 2) {
-          this.buttonText = '退出预览'
-        }
-        else {
-          this.buttonText = '返回首页'
-        }
+    current_step(val) {
+      if (val == 2) {
+        this.buttonText = '退出预览'
+      } else {
+        this.buttonText = '返回首页'
       }
+    }
   },
-  getList() {
-    axios.get('/public/template/get')
-      .then((result) => {
-        console.log(result);
-        // this.getHomeInfoSucc(result)
-      }).catch((err) => {
-        console.log(`请求数据出错: ${err}`)
-      })
-  },
-  mounted () {
-    this.getList()
+  mounted() {
+    this.getSwiperList();
   }
 }
 </script>
@@ -180,6 +118,11 @@ export default {
       width: 9.22rem;
       height: 5.2rem;
       border-radius: .25rem;
+      video {
+       width: 100%;
+       height: 100%;
+       object-fit: fill;
+      }
       .two_button {
         width: 4.8rem;
         position: absolute;
