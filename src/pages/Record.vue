@@ -19,6 +19,11 @@ export default {
   methods: {
     beginRecord(url) {
         beginrecord(url).then(res => {
+            //开始录制成功
+            if(res.status == 0) {
+                this.beginPullProgress('ws://meeting-front.hunterslab.cn/live/');
+                this.beginPullVedio('ws://meeting-front.hunterslab.cn/live/');
+            }
             console.log('开始录制', res);
         }).catch(err => {
             //提示错误
@@ -54,12 +59,8 @@ export default {
   },
   mounted () {
     // 视频地址
-    var url = JSON.parse(this.$route.params.message).url;
+    var url = JSON.parse(this.$route.params.message).file;
     this.beginRecord(url);
-    console.log("kakaka", "WebSocket" in window);
-
-    this.beginPullProgress('ws://meeting-front.hunterslab.cn/live/');
-    this.beginPullVedio('ws://meeting-front.hunterslab.cn/live/');
   }
 }
 </script>
