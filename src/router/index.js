@@ -12,8 +12,8 @@ export default new Router({
     component: Home
   },
   {
-    path: '/record',
-    name: 'Record',
+    path: '/record/:message',
+    name: 'record',
     component: Record
   }],
   scrollBehavior (to, from, savedPosition) {

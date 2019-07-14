@@ -15,3 +15,11 @@ export function getlist() {
         url: '/public/template/get'
     })
 }
+
+export function beginrecord(template_file) {
+    return request({
+        method: 'Get',
+        url: '/public/record/begin',
+        params: {template_file: template_file}
+    })
+}

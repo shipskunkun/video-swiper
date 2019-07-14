@@ -17,7 +17,8 @@
               <button class="left" @click="button_left">预览合成</button><button class="right" @click="button_right">完成录制</button>
             </div>
           </div>
-          <div class="out_time">04:58</div>
+          <!--todo-->
+          <!-- <div class="out_time">04:58</div> -->
         </template>
 
         <!--上传进度-->
@@ -48,61 +49,60 @@ import HomeSwiper from './Swiper'
 import { getlist } from '@/testServer.js'
 
 export default {
-  name: 'Home',
-  components: {
-    HomeSwiper
-  },
-  data() {
-    return {
-      current_step: 1,
-      current_index: 0,
-      buttonText: '返回首页',
-      swiperList: []
-    }
-  },
-  methods: {
-    button_left() {
-      console.log('点我了,1')
+    name: 'Home',
+    components: {
+        HomeSwiper
     },
-    button_right() {
-      console.log('点我了,2')
+    data() {
+        return {
+            current_step: 1,
+            current_index: 0,
+            buttonText: '返回首页',
+            swiperList: []
+        }
     },
-    buttonClick() {
-      this.current_step = 1;
-    },
-    clickPreview(val) {
-      this.current_step = 2;
-      // 当前是第几张
-      this.current_index = val;
-    },
-    clickRecord() {
-      this.$router.push({
-        path: '/record'
-      })
+    methods: {
+        button_left() {
+            console.log('点我了,1')
+        },
+        button_right() {
+            console.log('点我了,2')
+        },
+        buttonClick() {
+            this.current_step = 1;
+        },
+        clickPreview(val) {
+            this.current_step = 2;
+            // 当前是第几张
+            this.current_index = val;
+        },
+        clickRecord() {
+            var vedio_message = JSON.stringify(this.swiperList[this.current_index]);
+            this.$router.push({name: 'record',params: {message: vedio_message}})
 
-      // this.current_step =
-      console.log('点击右边')
+            // this.current_step =
+            console.log('点击右边')
+        },
+        getSwiperList() {
+            getlist().then(res => {
+                this.swiperList = res.data || [];
+            }).catch(err => {
+                //提示错误
+            })
+        }
     },
-    getSwiperList() {
-      getlist().then(res => {
-        this.swiperList = res.data || [];
-      }).catch(err => {
-        //提示错误
-      })
+    watch: {
+        current_step(val) {
+            if (val == 2) {
+                this.buttonText = '退出预览'
+            } else {
+                this.buttonText = '返回首页'
+            }
+        }
+    },
+    mounted() {
+        this.getSwiperList();
     }
-  },
-  watch: {
-    current_step(val) {
-      if (val == 2) {
-        this.buttonText = '退出预览'
-      } else {
-        this.buttonText = '返回首页'
-      }
-    }
-  },
-  mounted() {
-    this.getSwiperList();
-  }
 }
 </script>
 
