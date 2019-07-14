@@ -67,7 +67,7 @@ export default {
         "file": "/xxx/xxx/xxx.mp4", // 模板视频文件
         "duration": 30170, // 时长，单位毫秒
         "title": "标题",
-        "thumb": "http://img1.qunarzz.com/piao/fusion/1809/c6/2467595fffc3b302.jpg_750x200_cca13d51.jpg", // 展示缩略图
+        "thumb": "https://imgs.qunarzz.com/vs_ceph_vs_tts/edfa46e6-43e8-4026-9ca9-9bf5b9edee68.jpg_r_390x260x90_dd5071be.jpg", // 展示缩略图
         "description": "描述",
         "url": "http://xxx/xxx/xxx/xxx.mp4" // 模板预览地址
       },{
@@ -83,7 +83,7 @@ export default {
         "file": "/xxx/xxx/xxx.mp4", // 模板视频文件
         "duration": 30170, // 时长，单位毫秒
         "title": "标题",
-        "thumb": "https://imgs.qunarzz.com/p/tts6/1804/76/e21a1f848db63302.jpg_r_390x260x90_c4873f7a.jpg", // 展示缩略图
+        "thumb": "https://imgs.qunarzz.com/vs_ceph_vs_tts/09d88886-934e-4188-a117-45e190c7b842.jpg_r_390x260x90_11da6675.jpg", // 展示缩略图
         "description": "描述",
         "url": "http://xxx/xxx/xxx/xxx.mp4" // 模板预览地址
       },
@@ -101,7 +101,7 @@ export default {
         "file": "/xxx/xxx/xxx.mp4", // 模板视频文件
         "duration": 30170, // 时长，单位毫秒
         "title": "标题",
-        "thumb": "http://img1.qunarzz.com/piao/fusion/1809/c6/2467595fffc3b302.jpg_750x200_cca13d51.jpg", // 展示缩略图
+        "thumb": "https://imgs.qunarzz.com/vs_ceph_vs_tts/78774de0-ec03-4ff7-9e39-5a1267f0029c.jpg_r_390x260x90_f349ed35.jpg", // 展示缩略图
         "description": "描述",
         "url": "http://xxx/xxx/xxx/xxx.mp4" // 模板预览地址
       }]
@@ -153,8 +153,17 @@ export default {
         }
       }
   },
+  getList() {
+    axios.get('/public/template/get')
+      .then((result) => {
+        console.log(result);
+        // this.getHomeInfoSucc(result)
+      }).catch((err) => {
+        console.log(`请求数据出错: ${err}`)
+      })
+  },
   mounted () {
-    // this.getHomeInfo()
+    this.getList()
   }
 }
 </script>
@@ -278,7 +287,7 @@ export default {
     }
   }
   .background-pic{
-    // background: url('~@/assets/bg.png') no-repeat center center;
+    background: url('~@/assets/bg.png') no-repeat center center;
     // background-size:cover;
     background-size: 100% 100%;
     background-attachment: fixed;
@@ -291,7 +300,4 @@ export default {
     bottom:0;
     z-index:-999;
 }
-
-
-
 </style>

@@ -12,7 +12,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {
-        target: 'http://localhost:8080',
+        target: 'http://meeting-front.hunterslab.cn',
         changeOrigin:true,//允许跨域
         pathRewrite: {
           '^/api': '/static/mock'
