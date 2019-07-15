@@ -64,8 +64,9 @@ export default {
         };
         ws.onmessage = function(evt) {
             var received_msg = evt.data;
+            // 如果不是
             heartCheck.reset();
-            console.log('PullProgress接收', evt);
+            console.log('PullProgress接收', evt.data);
         };
 
         ws.onclose = function() {
