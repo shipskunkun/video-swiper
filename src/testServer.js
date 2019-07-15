@@ -11,15 +11,18 @@ import {request} from './request'
 // }
 export function getlist() {
     return request({
-        method: 'Get',
+        method: 'Post',
         url: '/public/template/get'
     })
 }
 
 export function beginrecord(template_file) {
+    console.log(template_file);
     return request({
-        method: 'Get',
+        method: 'Post',
         url: '/public/record/begin',
-        params: {template_file: template_file}
+        params: {
+            template_file: template_file
+        }
     })
 }

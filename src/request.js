@@ -1,20 +1,21 @@
 import axios from 'axios';
 import QS from 'qs';
 
-console.log('lalalllalla', process.env.NODE_ENV);
-//自动切换环境
-if (process.env.NODE_ENV == 'development'){
-    // axios.defaults.baseURL = '/api';
-    axios.defaults.baseURL = 'http://meeting-front.hunterslab.cn';
-} else if (process.env.NODE_ENV == 'debug'){
-    axios.defaults.baseURL = '/api';
-} else if (process.env.NODE_ENV == 'production') { 
-    axios.defaults.baseURL = 'http://***********/';
-}
+// 自动切换环境
+// if (process.env.NODE_ENV == 'development'){
+//     // axios.defaults.baseURL = '/api';
+//     axios.defaults.baseURL = 'http://meeting-front.hunterslab.cn';
+// } else if (process.env.NODE_ENV == 'debug'){
+//     axios.defaults.baseURL = '/api';
+// } else if (process.env.NODE_ENV == 'production') { 
+//     axios.defaults.baseURL = 'http://***********/';
+// }
+axios.defaults.baseURL = 'http://meeting-front.hunterslab.cn';
+
 //设置超时时间
 axios.defaults.timeout = 10000;
 // post请求头
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
+axios.defaults.headers.post['Content-Type'] = 'application/json;charset=UTF-8';
 
 //对外接口
 export function request({method, url, params}){
@@ -40,7 +41,8 @@ function get(url, params){
 // 封装post方法
 function post(url, params){
     return new Promise((resolve, reject) =>{
-        axios.post(url, QS.stringify(params)).then(res =>{
+        // axios.post(url, QS.stringify(params)).then(res =>{
+        axios.post(url, params).then(res =>{
             resolve(res.data);
         }).catch(err =>{
             reject(err.data);

@@ -59,7 +59,6 @@ export default {
         },
         on: {
           slideChangeTransitionEnd: function(){
-            console.log(this.realIndex)
             realIndex = this.realIndex;
           },
           progress: function(progress) {

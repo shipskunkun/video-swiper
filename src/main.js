@@ -13,8 +13,6 @@
         if (!clientWidth) {return;}
         docEl.style.fontSize =  clientWidth/19.2 + 'px';
         bodyEl.style.maxWidth =  clientWidth + 'px';
-
-        console.log(docEl.style.fontSize);
     };
     recalc();
     if (!doc.addEventListener) return;
