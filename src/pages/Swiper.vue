@@ -143,7 +143,7 @@ export default {
       font-size: 0.26rem;
       border-top-left-radius: 0.25rem;
       border-top-right-radius: 0.25rem;
-      opacity: 0.65;
+      // opacity: 0.65;
       button {
         display: inline-block;
         text-align: center;

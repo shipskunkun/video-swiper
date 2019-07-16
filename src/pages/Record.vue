@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <canvas id="video-canvas" ref="videoCanvas" width="900" height="600"></canvas>
+        <canvas id="video-canvas" ref="videoCanvas" width="900" height="600" loop="loop"></canvas>
     </div>
 </template>
 
@@ -33,7 +33,7 @@ export default {
       var that = this;
       var ws = new WebSocket('ws://meeting-front.hunterslab.cn/station/');
       var heartCheck = {
-          timeout: 30000,//30s
+          timeout: 10000,//10s
           timeoutObj: null,
           reset: function(){
               clearInterval(this.timeoutObj);
@@ -77,7 +77,6 @@ export default {
           if(data.category == "upload" &&  data.method == "complete") {
             console.log("设置全局downlink", data.link);
             that.$store.commit('set_downlink', data.link);
-            that.$store.commit('set_step', 5);
           }
           heartCheck.reset();
       };

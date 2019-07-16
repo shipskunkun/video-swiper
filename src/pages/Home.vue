@@ -37,9 +37,8 @@
         </div>
 
          <!--上传成功，显示二维码-->
-        <div class="step_code" v-if="current_step == 5">
-            <div class="code_image">
-              {{ link }}
+        <div class="step_code" v-show="current_step == 5">
+            <div class="code_image" id="qrcode">
             </div>
             <div>
                 <p>扫描上方二维码可直接下载合成的视频</p>
@@ -56,6 +55,7 @@ import axios from 'axios'
 import HomeSwiper from './Swiper'
 import { getlist, upload } from '@/testServer.js'
 import { mapState } from 'vuex'
+import QRCode from 'qrcodejs2'  // 引入qrcode
 
 
 export default {
@@ -74,11 +74,10 @@ export default {
       current_step() {
         return this.$store.state.current_step
       },
-      link() {
+      link(){
         return this.$store.state.link
       },
       preview_add() {
-        console.log('预览视频', this.$store.preview_add);
         return this.$store.state.preview_add
       },
       upload_add() {
@@ -86,18 +85,30 @@ export default {
       }
     },
     methods: {
+        qrcode(url) {
+          let qrcode = new QRCode('qrcode', {
+            width: 518+'px',
+            height: 518+'px',
+            text: url,
+            colorDark : "#000",
+            colorLight : "#fff",
+          })
+        },
         button_left() {
             console.log('点预览合成')
         },
         button_right() {
           console.log('上传地址', this.upload_add);
+          console.log('上传地址2', this.link);
 
           upload( this.upload_add).then(res=>{
-            console.log('点击上传', res);
+            console.log('上传预览素材', res);
             console.log("global_link", this.link);
             //上传成功
-            if(res.status == 0) {
-              this.$store.commit('set_step', 4);
+            if(res.status == 0){
+              if(!this.link){
+                this.$store.commit('set_step', 4);
+              }
             }
           }).catch(err => {
               //提示错误
@@ -131,19 +142,25 @@ export default {
             } else {
                 this.buttonText = '返回首页'
             }
-            // 预览合成、完成录制
-            if(val == 6) {
+            // 生成二维码
+            if(val == 4 && this.link) {
+              this.$router.push({name: 'Code'});
             }
         },
         preview_add(val) {
           console.log('preview_add', val);
+        },
+        link(val) {
+          if(val && this.current_step == 4) {
+            this.$router.push({name: 'Code'});
+          }
+          if( this.link && this.current_step == 4) {
+            this.$router.push({name: 'Code'});
+          }
         }
     },
     mounted() {
         this.getSwiperList();
-    },
-    actived() {
-      console.log('actived');
     }
 }
 </script>
@@ -174,7 +191,7 @@ export default {
         font-size: 0.26rem;
         border-top-left-radius: 0.25rem;
         border-top-right-radius: 0.25rem;
-        opacity: 0.4;
+        // opacity: 0.4;
         button {
           display: inline-block;
           text-align: center;
@@ -193,7 +210,6 @@ export default {
         }
       }
       & > button {
-        opacity: 0.65;
         position: absolute;
         bottom: 0;
         margin: 0 auto;
@@ -224,7 +240,6 @@ export default {
       text-align: center;
       height: 0.5rem;
       line-height: 0.5rem;
-      background-color: #00A293;
     }
   }
   .step_code {
@@ -234,9 +249,9 @@ export default {
     align-items: center;
     .code_image {
       margin-top: 2.87rem;
-      width: 5.18rem;
-      height: 5.18rem;
+      padding: 0.06rem;
       background-color: #fff;
+      z-index: 88;
     }
     div:nth-child(2){
       margin-top: 0.3rem;
