@@ -18,6 +18,7 @@
       <!-- <img class="left" @click="click_preview">
       <button class="left" @click="click_preview">预览</button><button class="right" @click="click_record">录制</button> -->
     </div>
+    <div class="time">{{ this.list[this.realIndex].duration | timefliter }}</div>
   </div>
 </template>
 
@@ -62,6 +63,7 @@ export default {
         on: {
           slideChangeTransitionEnd: function(){
             realIndex = this.realIndex;
+            console.log(this.realIndex);
           },
           progress: function(progress) {
             for (let i = 0; i < this.slides.length; i++) {
@@ -92,6 +94,11 @@ export default {
       }
     }
   },
+  filters: {
+    timefliter(val) {
+      return val
+    }
+  },
   mounted () {
     console.log(this.list)
   },
@@ -102,6 +109,7 @@ export default {
   },
   methods: {
     click_preview() {
+      console.log("这里", this.realIndex);
       this.$emit('click_preview', realIndex)
     },
     click_record() {
@@ -124,7 +132,7 @@ export default {
     .time {
       display: block;
       position: absolute;
-      margin-top: 1.9rem;
+      margin-top: 1.94rem;
       width: 1.3rem;
       height: 1.3rem;
       line-height: 1.3rem;
@@ -135,6 +143,7 @@ export default {
       background-color: #fff;
       color: #17D7C5;
       font-size: 0.3rem;
+      font-weight:500;
     }
     .operation {
       width: 4.8rem;

@@ -8,6 +8,9 @@
                 <p>还请尽快下载，视频只能保存7日下载源</p>
             </div>
         </div>
+        <div class="back_bottom">
+          <img src="../assets/back_home.png"  @click="buttonClick">
+        </div>
   </div>
 </template>
 
@@ -29,6 +32,9 @@ export default {
     }
   },
   methods: {
+    buttonClick() {
+      this.$router.push({name: 'Cover'});
+    },
     qrcode() {
         var that = this;
         var docEl = document.getElementsByTagName("html")[0];
@@ -73,6 +79,14 @@ export default {
           color: rgba(0,42,38,1);
           font-size: 0.24rem;
         }
+    }
+    .back_bottom {
+      position: fixed;
+      bottom: 0.67rem;
+      img {
+        width: 2rem;
+        height: 0.5rem;
+      }
     }
 }
 

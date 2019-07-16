@@ -12,7 +12,8 @@
           <div class="vedio">
             <video :src="swiperList[current_index].url" controls="controls" autoplay>
             </video>
-            <button>录制</button>
+            <img class="record_btn" @click="clickRecord" src="../assets/record.png">
+            <div class="time">{{ swiperList[current_index].duration }}</div>
           </div>
           <!--todo-->
           <!-- <div class="out_time">04:58</div> -->
@@ -23,7 +24,8 @@
             <video :src="preview_add" controls="controls" autoplay>
             </video>
             <div class="two_button">
-              <button class="left" @click="button_left">预览合成</button><button class="right" @click="button_right">完成录制</button>
+              <img @click="button_left" src="../assets/left_btn_1.png"><img @click="button_right" src="../assets/right_btn_1.png">
+              <!-- <button class="left" @click="button_left">预览合成</button><button class="right" @click="button_right">完成录制</button> -->
             </div>
           </div>
         </template>
@@ -47,8 +49,8 @@
         </div>-->
 
         <div class="back_bottom">
-          <img src="../assets/back_home.png"  @click="buttonClick">
-          <!-- <img src="../assets/back_home.png"  @click="buttonClick"> -->
+          <img v-if="current_step == 1 || current_step == 6" src="../assets/back_home.png"  @click="backToCover">
+          <img v-if="current_step ==2" src="../assets/exit_preview.png"  @click="backToHome">
         </div>
     </div>
 </template>
@@ -99,6 +101,12 @@ export default {
       }
     },
     methods: {
+        backToCover() {
+          this.$router.push({path: '/'});
+        },
+        backToHome () {
+          this.$store.commit('set_step', 1)
+        },
         getSrc() {
           return '@/assets/back_home.png';
         },
@@ -131,14 +139,6 @@ export default {
               //提示错误
           })
         },
-        buttonClick() {
-            // 回到首页，
-            if(this.current_step == 1 ||this.current_step == 5 || this.current_step == 6) {
-              this.$router.push({path: '/'})
-            }
-            // 退出预览
-            this.$store.commit('set_step', 1)
-        },
         clickPreview(val) {
             this.$store.commit('set_step', 2)
             // 当前是第几张
@@ -158,12 +158,6 @@ export default {
     },
     watch: {
         current_step(val) {
-          console.log('current_step val', val)
-            if (val == 2) {
-                this.buttonText = '退出预览'
-            } else {
-                this.buttonText = '返回首页'
-            }
             // 生成二维码
             if(val == 4 && this.link) {
               this.$router.push({name: 'Code'});
@@ -199,6 +193,22 @@ export default {
       width: 9.22rem;
       height: 5.2rem;
       border-radius: .25rem;
+      display: flex;
+      justify-content: center;
+      .time {
+        position: absolute;
+        top: 5.6rem;
+        font-size: 0.48rem;
+        color: #17D7C5;
+      }
+      .record_btn {
+        bottom: 0;
+        position: absolute;
+        left: 50%;
+        margin-left: -1.54rem;
+        width: 3.08rem;
+        height: 0.74rem;
+      }
       video {
        width: 100%;
        height: 100%;
@@ -207,42 +217,14 @@ export default {
       .two_button {
         width: 4.8rem;
         position: absolute;
-        left: 50%;
-        margin-left: -2.4rem;
+        height: 0.7rem;
         bottom: 0;
-        font-size: 0.26rem;
-        border-top-left-radius: 0.25rem;
-        border-top-right-radius: 0.25rem;
-        // opacity: 0.4;
-        button {
+        z-index:999;
+        img {
           display: inline-block;
-          text-align: center;
-          line-height: 0.7rem;
           width: 2.4rem;
           height: 0.7rem;
-          background-color: rgba(255,209,67,50);
-          box-sizing: border-box;
         }
-        .left {
-          border-top-left-radius: 0.25rem;
-          border-right: 1px solid rgba(255,209,67,1);
-        }
-        .right {
-          border-top-right-radius: 0.25rem;
-        }
-      }
-      & > button {
-        position: absolute;
-        bottom: 0;
-        margin: 0 auto;
-        width: 3rem;
-        left: 50%;
-        margin-left: -1.5rem;
-        height: 0.7rem;
-        background-color: #fff;
-        border-top-left-radius: 0.25rem;
-        border-top-right-radius: 0.25rem;
-        background-color: #00A293;
       }
     }
     .out_time {

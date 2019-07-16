@@ -1,7 +1,7 @@
 
 <template>
     <div class="container">
-      <div class="background-pic"></div>
+      <div class="cover-pic"></div>
       <img src="../assets/click.png"  @click="gotoHome" class="click_btn">
     </div>
 </template>
@@ -18,6 +18,7 @@ export default {
     },
     methods: {
         gotoHome(){
+          this.$store.commit('set_step', 1);
           this.$router.push({name: 'Home'});
         }
     }
@@ -34,7 +35,7 @@ export default {
       bottom: 0.67rem;
     }
   }
-  .background-pic{
+  .cover-pic{
     background: url('~@/assets/cover.jpg') no-repeat center center;
     // background-size:cover;
     background-size: 100% 100%;

@@ -1,6 +1,8 @@
 <template>
     <div class="container">
-        <canvas id="video-canvas" ref="videoCanvas" width="900" height="600" loop="loop"></canvas>
+        <canvas id="video-canvas" ref="videoCanvas"></canvas>
+          <img src="../assets/record_1.png" class="out_time"></img>
+          <img src="../assets/record_2.png" class="in_time">
     </div>
 </template>
 
@@ -118,5 +120,29 @@ export default {
     right:0;
     bottom:0;
     z-index: -999;
+}
+.container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    .out_time {
+      position: absolute;
+      bottom: 0;
+      width: 4.8rem;
+      height: 0.7rem;
+      z-index: 999;
+      display: block;
+    }
+    .video-canvas {
+      width: 100%;
+      height: 100%;
+    }
+    .in_time {
+      position: absolute;
+      width: 0.4rem;
+      height: 0.4rem;
+      bottom: 0.13rem;
+      left: 7.92rem;
+    }
 }
 </style>
