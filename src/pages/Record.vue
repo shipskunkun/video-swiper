@@ -74,7 +74,7 @@ export default {
           }
 
           if(data.category == "upload" &&  data.method == "complete") {
-            console.log("设置全局downlink")
+            console.log("设置全局downlink", data.link);
             global_val.set_downlink(data.link);
           }
           heartCheck.reset();

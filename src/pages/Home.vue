@@ -57,6 +57,7 @@ import HomeSwiper from './Swiper'
 import { getlist, upload } from '@/testServer.js'
 import global_val from '@/global_val.js'
 
+
 export default {
     name: 'Home',
     components: {
@@ -89,7 +90,10 @@ export default {
             this.current_step = 1;
         },
         clickPreview(val) {
-            this.current_step = 2;
+            global_val.set_current_step(2);
+
+            console.log()
+            // this.current_step = 2;
             // 当前是第几张
             this.current_index = val;
         },
