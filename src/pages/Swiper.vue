@@ -14,7 +14,9 @@
     </swiper>
     <!-- <div class="time">0.48</div> -->
     <div class="operation">
-      <button class="left" @click="click_preview">预览</button><button class="right" @click="click_record">录制</button>
+      <img class="left" @click="click_preview" src="../assets/left_btn_2.png"><img class="right" @click="click_record" src="../assets/right_btn_2.png">
+      <!-- <img class="left" @click="click_preview">
+      <button class="left" @click="click_preview">预览</button><button class="right" @click="click_record">录制</button> -->
     </div>
   </div>
 </template>
@@ -138,27 +140,12 @@ export default {
       width: 4.8rem;
       position: absolute;
       bottom: 0.6rem;
+      height: 0.7rem;
       z-index: 999;
-      background-color: #17D7C5;
-      font-size: 0.26rem;
-      border-top-left-radius: 0.25rem;
-      border-top-right-radius: 0.25rem;
-      // opacity: 0.65;
-      button {
+      img {
         display: inline-block;
-        text-align: center;
-        line-height: 0.7rem;
         width: 2.4rem;
         height: 0.7rem;
-        background-color: #00A293;
-        box-sizing: border-box;
-      }
-      .left {
-        border-top-left-radius: 0.25rem;
-        border-right: 1px solid rgba(23,215,197,1);
-      }
-      .right {
-        border-top-right-radius: 0.25rem;
       }
     }
   }

@@ -1,4 +1,4 @@
-<!--首页1，预览2，全屏录制3，上传进度条4，二维码5，预览合成6-->
+<!--轮播页面1，预览2，全屏录制3，上传进度条4，预览合成6-->
 <template>
     <div class="container">
         <div class="background-pic"></div>
@@ -36,7 +36,7 @@
             <div>Loding中</div>
         </div>
 
-         <!--上传成功，显示二维码-->
+         <!--上传成功，显示二维码
         <div class="step_code" v-show="current_step == 5">
             <div class="code_image" id="qrcode">
             </div>
@@ -44,9 +44,12 @@
                 <p>扫描上方二维码可直接下载合成的视频</p>
                 <p>还请尽快下载，视频只能保存7日下载源</p>
             </div>
-        </div>
+        </div>-->
 
-        <button v-if="current_step == 2 ||current_step == 5 || current_step == 6" class="button" @click="buttonClick">{{ buttonText }}</button>
+        <div class="back_bottom">
+          <img src="../assets/back_home.png"  @click="buttonClick">
+          <!-- <img src="../assets/back_home.png"  @click="buttonClick"> -->
+        </div>
     </div>
 </template>
 
@@ -71,6 +74,17 @@ export default {
         }
     },
     computed: {
+      img_src() {
+        var img_src = "";
+        if(this.current_step == 1 ||this.current_step == 5 || this.current_step == 6) {
+          img_src = '../assets/back_home.png'
+        }
+        if( this.current_step == 2) {
+          img_src = '../assets/exit_preview.png'
+        }
+        console.log(img_src);
+        return img_src;
+      },
       current_step() {
         return this.$store.state.current_step
       },
@@ -85,6 +99,9 @@ export default {
       }
     },
     methods: {
+        getSrc() {
+          return '@/assets/back_home.png';
+        },
         qrcode(url) {
           let qrcode = new QRCode('qrcode', {
             width: 518+'px',
@@ -115,7 +132,12 @@ export default {
           })
         },
         buttonClick() {
-            this.$store.commit('set_step', 1);
+            // 回到首页，
+            if(this.current_step == 1 ||this.current_step == 5 || this.current_step == 6) {
+              this.$router.push({path: '/'})
+            }
+            // 退出预览
+            this.$store.commit('set_step', 1)
         },
         clickPreview(val) {
             this.$store.commit('set_step', 2)
@@ -229,17 +251,13 @@ export default {
       color: #17D7C5;
       bottom: 1.71rem;
     }
-    .button {
+    .back_bottom {
       position: fixed;
-      width: 2rem;
-      background-color: #fff;
-      color: #17D7C5;
-      font-size: 0.22rem;
-      border-radius: 0.25rem;
       bottom: 0.67rem;
-      text-align: center;
-      height: 0.5rem;
-      line-height: 0.5rem;
+      img {
+        width: 2rem;
+        height: 0.5rem;
+      }
     }
   }
   .step_code {

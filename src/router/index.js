@@ -15,15 +15,15 @@ export default new Router({
     component: Code
   },
   {
-    path: '/',
+    path: '/home',
     name: 'Home',
     component: Home
   },
-  // {
-  //   path: '/',
-  //   name: 'Cover',
-  //   component: Cover
-  // },
+  {
+    path: '/',
+    name: 'Cover',
+    component: Cover
+  },
   {
     path: '/record/:message',
     name: 'record',

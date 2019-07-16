@@ -2,7 +2,7 @@
 <template>
     <div class="container">
       <div class="background-pic"></div>
-      <button @click="gotoHome">laaaa</button>
+      <img src="../assets/click.png"  @click="gotoHome" class="click_btn">
     </div>
 </template>
 
@@ -29,12 +29,13 @@ export default {
     position: relative;
     display: flex;
     justify-content: center;
-    button {
-      position: absolute;
+    .click_btn {
+      position: fixed;;
+      bottom: 0.67rem;
     }
   }
   .background-pic{
-    background: url('~@/assets/cover.jpeg') no-repeat center center;
+    background: url('~@/assets/cover.jpg') no-repeat center center;
     // background-size:cover;
     background-size: 100% 100%;
     background-attachment: fixed;
@@ -45,6 +46,6 @@ export default {
     left:0;
     right:0;
     bottom:0;
-    z-index:999;
+    z-index:-999;
   }
 </style>
