@@ -7,7 +7,7 @@
             <home-swiper :list="swiperList" @click_preview="clickPreview" @click_record="clickRecord"></home-swiper>
         </template>
 
-        <!--预览或完成录制 2 或 6-->
+        <!--预览或完成录制 2 -->
         <template v-if="current_step == 2">
           <div class="vedio">
             <video :src="swiperList[current_index].url" controls="controls" autoplay>
@@ -20,7 +20,7 @@
 
         <template v-if="current_step == 6">
           <div class="vedio">
-            <video :src="swiperList[current_index].url" controls="controls" autoplay>
+            <video :src="global_val.preview_add" controls="controls" autoplay>
             </video>
             <div class="two_button">
               <button class="left" @click="button_left">预览合成</button><button class="right" @click="button_right">完成录制</button>
@@ -39,6 +39,7 @@
          <!--上传成功，显示二维码-->
         <div class="step_code" v-if="current_step == 5">
             <div class="code_image">
+              {{ global_val.link }}
             </div>
             <div>
                 <p>扫描上方二维码可直接下载合成的视频</p>
@@ -53,7 +54,7 @@
 <script>
 import axios from 'axios'
 import HomeSwiper from './Swiper'
-import { getlist } from '@/testServer.js'
+import { getlist, upload } from '@/testServer.js'
 import global_val from '@/global_val.js'
 
 export default {
@@ -71,12 +72,18 @@ export default {
     },
     methods: {
         button_left() {
-            //预览合成
-            
-            console.log('点我了,1')
+            console.log('点预览合成')
         },
         button_right() {
-            console.log('点我了,2')
+          upload( global_val.upload_add).then(res=>{
+            console.log('点击上传', res);
+            //上传成功
+            if(res.status == 0 && global_val.link) {
+              this.current_step = 5;
+            }
+          }).catch(err => {
+              //提示错误
+          })
         },
         buttonClick() {
             this.current_step = 1;
@@ -89,7 +96,7 @@ export default {
         clickRecord() {
             var vedio_message = JSON.stringify(this.swiperList[this.current_index]);
             this.$router.push({name: 'record',params: {message: vedio_message}})
-        },
+                    },
         getSwiperList() {
             getlist().then(res => {
                 this.swiperList = res.data || [];
@@ -100,6 +107,7 @@ export default {
     },
     watch: {
         current_step(val) {
+          console.log('current_step val', val)
             if (val == 2) {
                 this.buttonText = '退出预览'
             } else {

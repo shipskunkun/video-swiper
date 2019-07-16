@@ -13,6 +13,16 @@ import {request} from './request'
 var ws;
 var heartCheck;
 
+export function upload(path) {
+    return request({
+        method: 'Post',
+        url: '/public/upload/begin',
+        params: {
+            path: path
+        }
+    })
+}
+
 export function getWebsocket() {
     if(ws) {
         return ws;

@@ -31,6 +31,7 @@ export default {
         })
     },
     beginPullProgress() {
+      var that = this;
       var ws = new WebSocket('ws://meeting-front.hunterslab.cn/station/');
       var heartCheck = {
           timeout: 30000,//30s
@@ -54,13 +55,27 @@ export default {
       ws.onmessage = function(evt) {
           var received_msg = evt.data;
           // 如果转码完成
-          console.log('PullProgress接收', evt.data);
-          if(evt.data.category =="transcode") {
-            console.log("执行全局设置变量");
-            global_val.set_preview(evt.data.preview);
-            global_val.set_preview(evt.data.path);
+          console.log('PullProgress接收', evt );
+          console.log('PullProgress接收', evt.data.category);
+
+          var data = evt.data;
+          try{
+            data = JSON.parse(evt.data);
+          }catch(err) {
+            data = evt.data;
+          }
+          console.log('转换后的data', data);
+          if(data.category =="transcode" && data.method == "complete") {
+            console.log("执行预览");
+            global_val.set_preview(data.preview);
+            global_val.set_upload(data.path);
             global_val.set_current_step(6);
-            this.push({name: 'Home'})
+            that.$router.push({name: 'Home'})
+          }
+
+          if(data.category == "upload" &&  data.method == "complete") {
+            console.log("设置全局downlink")
+            global_val.set_downlink(data.link);
           }
           heartCheck.reset();
       };
