@@ -8,17 +8,24 @@
         </template>
 
         <!--预览或完成录制 2 或 6-->
-        <template v-if="current_step == 2 || current_step == 6">
+        <template v-if="current_step == 2">
           <div class="vedio">
             <video :src="swiperList[current_index].url" controls="controls" autoplay>
             </video>
-            <button v-if="current_step == 2">录制</button>
-            <div class="two_button" v-if="current_step == 6">
-              <button class="left" @click="button_left">预览合成</button><button class="right" @click="button_right">完成录制</button>
-            </div>
+            <button>录制</button>
           </div>
           <!--todo-->
           <!-- <div class="out_time">04:58</div> -->
+        </template>
+
+        <template v-if="current_step == 6">
+          <div class="vedio">
+            <video :src="swiperList[current_index].url" controls="controls" autoplay>
+            </video>
+            <div class="two_button">
+              <button class="left" @click="button_left">预览合成</button><button class="right" @click="button_right">完成录制</button>
+            </div>
+          </div>
         </template>
 
         <!--上传进度-->
@@ -47,6 +54,7 @@
 import axios from 'axios'
 import HomeSwiper from './Swiper'
 import { getlist } from '@/testServer.js'
+import global_val from '@/global_val.js'
 
 export default {
     name: 'Home',
@@ -55,7 +63,7 @@ export default {
     },
     data() {
         return {
-            current_step: 1,
+            current_step: global_val.current_step,
             current_index: 0,
             buttonText: '返回首页',
             swiperList: []
@@ -63,6 +71,8 @@ export default {
     },
     methods: {
         button_left() {
+            //预览合成
+            
             console.log('点我了,1')
         },
         button_right() {
@@ -79,9 +89,6 @@ export default {
         clickRecord() {
             var vedio_message = JSON.stringify(this.swiperList[this.current_index]);
             this.$router.push({name: 'record',params: {message: vedio_message}})
-
-            // this.current_step =
-            console.log('点击右边')
         },
         getSwiperList() {
             getlist().then(res => {
@@ -98,10 +105,16 @@ export default {
             } else {
                 this.buttonText = '返回首页'
             }
+            // 预览合成、完成录制
+            if(val == 6) {
+            }
         }
     },
     mounted() {
         this.getSwiperList();
+    },
+    actived() {
+      console.log('actived');
     }
 }
 </script>

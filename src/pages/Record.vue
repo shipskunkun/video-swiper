@@ -7,7 +7,8 @@
 <script>
 import HomeSwiper from './Swiper'
 import axios from 'axios'
-import { beginrecord } from '@/testServer.js'
+import { beginrecord, getWebsocket  } from '@/testServer.js'
+import global_val from '@/global_val.js'
 
 export default {
   name: 'Record',
@@ -29,53 +30,53 @@ export default {
             //提示错误
         })
     },
+    beginPullProgress() {
+      var ws = new WebSocket('ws://meeting-front.hunterslab.cn/station/');
+      var heartCheck = {
+          timeout: 30000,//30s
+          timeoutObj: null,
+          reset: function(){
+              clearInterval(this.timeoutObj);
+              this.start();
+          },
+          start: function(){
+              this.timeoutObj = setInterval(function(){
+                  if(ws.readyState==1){
+                      ws.send("HeartBeat");
+                  }
+              }, this.timeout)
+          }
+      };
+      ws.onopen = function(){
+          console.log('onopen');
+          heartCheck.start();
+      };
+      ws.onmessage = function(evt) {
+          var received_msg = evt.data;
+          // 如果转码完成
+          console.log('PullProgress接收', evt.data);
+          if(evt.data.category =="transcode") {
+            console.log("执行全局设置变量");
+            global_val.set_preview(evt.data.preview);
+            global_val.set_preview(evt.data.path);
+            global_val.set_current_step(6);
+            this.push({name: 'Home'})
+          }
+          heartCheck.reset();
+      };
+
+      ws.onclose = function() {
+          console.log("onclose", evnt);
+          if (evnt.code != 4500) {
+              //4500为服务端在打开多tab时主动关闭返回的编码
+              // reconnect();//重连
+          }
+      };
+    },
     beginPullVedio() {
         var canvas = document.getElementById('video-canvas');
         var url = 'ws://meeting-front.hunterslab.cn/live/';
         var player = new JSMpeg.Player(url, {canvas: canvas,loop: true, autoplay: true});
-    },
-
-    beginPullProgress() {
-
-        var ws = new WebSocket('ws://meeting-front.hunterslab.cn/station/');
-
-        var heartCheck = {
-            timeout: 30000,//30s
-            timeoutObj: null,
-            reset: function(){
-                clearInterval(this.timeoutObj);
-                this.start();
-            },
-            start: function(){
-                this.timeoutObj = setInterval(function(){
-                    if(ws.readyState==1){
-                        ws.send("HeartBeat");
-                    }
-                }, this.timeout)
-            }
-        };
-
-        console.log('beginPullProgress222');
-        ws.onopen = function(){
-            // Web Socket 已连接上，使用 send() 方法发送数据
-            // ws.send("发送数据");
-            console.log('onopen');
-            heartCheck.start();
-        };
-        ws.onmessage = function(evt) {
-            var received_msg = evt.data;
-            // 如果不是
-            heartCheck.reset();
-            console.log('PullProgress接收', evt.data);
-        };
-
-        ws.onclose = function() {
-            console.log("onclose", evnt);
-            if (evnt.code != 4500) {
-                //4500为服务端在打开多tab时主动关闭返回的编码
-                // reconnect();//重连
-            }
-        };
     }
   },
   mounted () {

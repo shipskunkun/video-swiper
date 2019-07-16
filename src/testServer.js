@@ -9,6 +9,39 @@ import {request} from './request'
 //         })
 //     }
 // }
+
+var ws;
+var heartCheck;
+
+export function getWebsocket() {
+    if(ws) {
+        return ws;
+    }
+    else {
+        ws = new WebSocket('ws://meeting-front.hunterslab.cn/station/');
+        heartCheck = {
+            timeout: 30000,//30s
+            timeoutObj: null,
+            reset: function(){
+                clearInterval(this.timeoutObj);
+                this.start();
+            },
+            start: function(){
+                this.timeoutObj = setInterval(function(){
+                    if(ws.readyState==1){
+                        ws.send("HeartBeat");
+                    }
+                }, this.timeout)
+            }
+        };
+        ws.onopen = function(){
+            console.log('onopen');
+            heartCheck.start();
+        };
+        return ws;
+    }
+}
+
 export function getlist() {
     return request({
         method: 'Post',
