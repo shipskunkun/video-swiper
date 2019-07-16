@@ -8,7 +8,6 @@
 import HomeSwiper from './Swiper'
 import axios from 'axios'
 import { beginrecord, getWebsocket  } from '@/testServer.js'
-import global_val from '@/global_val.js'
 
 export default {
   name: 'Record',
@@ -67,15 +66,18 @@ export default {
           console.log('转换后的data', data);
           if(data.category =="transcode" && data.method == "complete") {
             console.log("执行预览");
-            global_val.set_preview(data.preview);
-            global_val.set_upload(data.path);
-            global_val.set_current_step(6);
+
+            that.$store.commit('set_preview', data.preview);
+            that.$store.commit('set_upload', data.path);
+            that.$store.commit('set_step', 6);
+
             that.$router.push({name: 'Home'})
           }
 
           if(data.category == "upload" &&  data.method == "complete") {
             console.log("设置全局downlink", data.link);
-            global_val.set_downlink(data.link);
+            that.$store.commit('set_downlink', data.link);
+            that.$store.commit('set_step', 5);
           }
           heartCheck.reset();
       };

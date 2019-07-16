@@ -29,6 +29,7 @@ import router from './router'
 import fastClick from 'fastclick'
 import VueAwesomeSwiper from 'vue-awesome-swiper'
 import Axios from 'axios'
+import store from './store'
 import 'babel-polyfill'
 import 'styles/reset.css'
 import 'styles/border.css'
@@ -44,6 +45,7 @@ Vue.use(VueAwesomeSwiper)
 new Vue({
   el: '#app',
   router,
+  store,
   components: {
     App
   },

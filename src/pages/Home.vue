@@ -20,7 +20,7 @@
 
         <template v-if="current_step == 6">
           <div class="vedio">
-            <video :src="global_val.preview_add" controls="controls" autoplay>
+            <video :src="preview_add" controls="controls" autoplay>
             </video>
             <div class="two_button">
               <button class="left" @click="button_left">预览合成</button><button class="right" @click="button_right">完成录制</button>
@@ -33,13 +33,13 @@
             <div class="progress">
                 <img src="../assets/progress.png"></img>
             </div>
-            <div>Loding 50% completed</div>
+            <div>Loding中</div>
         </div>
 
          <!--上传成功，显示二维码-->
         <div class="step_code" v-if="current_step == 5">
             <div class="code_image">
-              {{ global_val.link }}
+              {{ link }}
             </div>
             <div>
                 <p>扫描上方二维码可直接下载合成的视频</p>
@@ -55,7 +55,7 @@
 import axios from 'axios'
 import HomeSwiper from './Swiper'
 import { getlist, upload } from '@/testServer.js'
-import global_val from '@/global_val.js'
+import { mapState } from 'vuex'
 
 
 export default {
@@ -65,35 +65,49 @@ export default {
     },
     data() {
         return {
-            current_step: global_val.current_step,
             current_index: 0,
             buttonText: '返回首页',
             swiperList: []
         }
+    },
+    computed: {
+      current_step() {
+        return this.$store.state.current_step
+      },
+      link() {
+        return this.$store.state.link
+      },
+      preview_add() {
+        console.log('预览视频', this.$store.preview_add);
+        return this.$store.state.preview_add
+      },
+      upload_add() {
+        return this.$store.state.upload_add
+      }
     },
     methods: {
         button_left() {
             console.log('点预览合成')
         },
         button_right() {
-          upload( global_val.upload_add).then(res=>{
+          console.log('上传地址', this.upload_add);
+
+          upload( this.upload_add).then(res=>{
             console.log('点击上传', res);
+            console.log("global_link", this.link);
             //上传成功
-            if(res.status == 0 && global_val.link) {
-              this.current_step = 5;
+            if(res.status == 0) {
+              this.$store.commit('set_step', 4);
             }
           }).catch(err => {
               //提示错误
           })
         },
         buttonClick() {
-            this.current_step = 1;
+            this.$store.commit('set_step', 1);
         },
         clickPreview(val) {
-            global_val.set_current_step(2);
-
-            console.log()
-            // this.current_step = 2;
+            this.$store.commit('set_step', 2)
             // 当前是第几张
             this.current_index = val;
         },
@@ -120,6 +134,9 @@ export default {
             // 预览合成、完成录制
             if(val == 6) {
             }
+        },
+        preview_add(val) {
+          console.log('preview_add', val);
         }
     },
     mounted() {
