@@ -141,8 +141,8 @@ export default {
       position: absolute;
       width: 0.4rem;
       height: 0.4rem;
-      bottom: 0.13rem;
-      left: 7.92rem;
+      bottom: 0.135rem;
+      left: 7.925rem;
     }
 }
 </style>

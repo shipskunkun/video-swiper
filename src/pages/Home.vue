@@ -9,19 +9,19 @@
 
         <!--预览或完成录制 2 -->
         <template v-if="current_step == 2">
+          <div class="mask"></div>
           <div class="vedio">
             <video :src="swiperList[current_index].url" controls="controls" autoplay>
             </video>
             <img class="record_btn" @click="clickRecord" src="../assets/record.png">
-            <div class="time">{{ swiperList[current_index].duration }}</div>
+            <div class="time">{{ swiperList[current_index].duration  | timefilter }}</div>
           </div>
-          <!--todo-->
-          <!-- <div class="out_time">04:58</div> -->
         </template>
 
         <template v-if="current_step == 6">
+          <div class="mask"></div>
           <div class="vedio">
-            <video :src="preview_add" controls="controls" autoplay>
+            <video :src="preview_add" controls="controls" ref="preview_video">
             </video>
             <div class="two_button">
               <img @click="button_left" src="../assets/left_btn_1.png"><img @click="button_right" src="../assets/right_btn_1.png">
@@ -75,6 +75,24 @@ export default {
             swiperList: []
         }
     },
+    filters: {
+      timefilter(val) {
+        var t = Math.floor(val/1000);
+        var h = Math.floor(t / 3600);
+        if(h == 0) {
+          h = "";
+        }
+        else if(0<h<10) {
+          h = '0'+Math.floor(t / 3600) + ":"
+        }
+        else {
+          h = Math.floor(t / 3600) + ":"
+        }
+        var m = Math.floor((t / 60 % 60)) < 10 ? '0' + Math.floor((t / 60 % 60)) : Math.floor((t / 60 % 60));
+        var s = Math.floor((t % 60)) < 10 ? '0' + Math.floor((t % 60)) : Math.floor((t % 60));
+        return `${h}${m}:${s}`;
+      }
+    },
     computed: {
       img_src() {
         var img_src = "";
@@ -120,6 +138,12 @@ export default {
           })
         },
         button_left() {
+            var video = this.$refs.preview_video;
+            if (video.paused) {
+              video.play();
+            } else {
+              video.pause();
+            }
             console.log('点预览合成')
         },
         button_right() {
@@ -186,6 +210,14 @@ export default {
     position: relative;
     display: flex;
     justify-content: center;
+
+    .mask {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      background-color: #000;
+      opacity: 0.6;
+    }
     .vedio {
       position: fixed;
       background-color: #fff;

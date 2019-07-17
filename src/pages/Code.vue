@@ -73,8 +73,10 @@ export default {
           padding: 0.36rem;
           background-color: #fff;
           z-index: 88;
+          border-radius: 0.2rem;
         }
         div:nth-child(2){
+          line-height: 0.33rem;
           margin-top: 0.3rem;
           color: rgba(0,42,38,1);
           font-size: 0.24rem;

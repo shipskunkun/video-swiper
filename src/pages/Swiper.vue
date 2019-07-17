@@ -18,7 +18,7 @@
       <!-- <img class="left" @click="click_preview">
       <button class="left" @click="click_preview">预览</button><button class="right" @click="click_record">录制</button> -->
     </div>
-    <div class="time">{{ this.list[this.realIndex].duration | timefliter }}</div>
+    <div class="time">{{ this.list[this.realIndex].duration | timefilter }}</div>
   </div>
 </template>
 
@@ -30,11 +30,21 @@ export default {
     list: Array
   },
   filters: {
-    filter_time(result) {
-      var h = Math.floor(result / 3600) < 10 ? '0'+Math.floor(result / 3600) : Math.floor(result / 3600);
-      var m = Math.floor((result / 60 % 60)) < 10 ? '0' + Math.floor((result / 60 % 60)) : Math.floor((result / 60 % 60));
-      var s = Math.floor((result % 60)) < 10 ? '0' + Math.floor((result % 60)) : Math.floor((result % 60));
-      return result = h + ":" + m + ":" + s;
+    timefilter(val) {
+      var t = Math.floor(val/1000);
+      var h = Math.floor(t / 3600);
+      if(h == 0) {
+        h = "";
+      }
+      else if(0<h<10) {
+        h = '0'+Math.floor(t / 3600) + ":"
+      }
+      else {
+        h = Math.floor(t / 3600) + ":"
+      }
+      var m = Math.floor((t / 60 % 60)) < 10 ? '0' + Math.floor((t / 60 % 60)) : Math.floor((t / 60 % 60));
+      var s = Math.floor((t % 60)) < 10 ? '0' + Math.floor((t % 60)) : Math.floor((t % 60));
+      return `${h}${m}:${s}`;
     }
   },
   data () {
@@ -92,11 +102,6 @@ export default {
           }
         }
       }
-    }
-  },
-  filters: {
-    timefliter(val) {
-      return val
     }
   },
   mounted () {
@@ -196,6 +201,10 @@ export default {
     width: 10px;
     height: 10px;
     opacity: 1;
+  }
+
+  #certify .swiper-pagination-bullet-active {
+    background: #fff !important;
   }
 
   #certify .swiper-pagination-bullets .swiper-pagination-bullet-active {
