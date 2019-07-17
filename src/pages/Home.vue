@@ -32,10 +32,7 @@
 
         <!--上传进度-->
         <div class="step_upload" v-if="current_step == 4">
-            <div class="progress">
-                <img src="../assets/progress.png"></img>
-            </div>
-            <div>Loding中</div>
+          <img src="../assets/loading.gif"></img>
         </div>
 
          <!--上传成功，显示二维码
@@ -294,29 +291,19 @@ export default {
   .step_upload {
     position: fixed;
     top: 4.15rem;
-    width: 9.2rem;
+    width: 8rem;
     border-radius: 0.2rem;
-    height: 3rem;
+    height: 8rem;
     background-color: #fff;
     z-index: 2;
     display: flex;
     flex-direction: column;
     align-items: center;
-    .progress {
-      margin-top: 0.9rem;
-      margin-bottom: 0.4rem;
-      width: 6rem;
-      height: 1rem;
-      img {
+    img {
         width: 100%;
         height: 100%;
         z-index: 3;
       }
-    }
-    div:nth-child(2){
-      color: rgba(0,42,38,1);
-      font-size: 0.35rem;
-    }
   }
   .background-pic{
     background: url('~@/assets/bg.png') no-repeat center center;

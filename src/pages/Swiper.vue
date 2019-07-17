@@ -1,6 +1,6 @@
 <template>
   <div id="certify">
-    <swiper :options="swiperOption" v-if="showSwiper">
+    <swiper :options="swiperOption" v-if="showSwiper" ref="mySwiper">
       <swiper-slide v-for="item in list" :key="item.id">
         <img class="swiper-img" :src="item.thumb">
       </swiper-slide>
@@ -18,12 +18,11 @@
       <!-- <img class="left" @click="click_preview">
       <button class="left" @click="click_preview">预览</button><button class="right" @click="click_record">录制</button> -->
     </div>
-    <div class="time">{{ this.list[this.realIndex].duration | timefilter }}</div>
+    <div class="time" v-if="this.list[this.realIndex] && this.list[this.realIndex].duration ">{{ this.list[this.realIndex].duration | timefilter }}</div>
   </div>
 </template>
 
 <script>
-var  realIndex = 0;
 export default {
   name: 'HomeSwiper',
   props: {
@@ -71,9 +70,18 @@ export default {
           prevEl: '.swiper-button-prev'
         },
         on: {
+          click: ()=>{
+            // 通过$refs获取对应的swiper对象
+            let swiper = this.$refs.mySwiper.swiper;
+            let i = swiper.activeIndex;
+            let j = swiper.realIndex;
+            console.log(i,j);
+            let flag = this.imgList[i];
+            location.href = flag.url;
+          },
           slideChangeTransitionEnd: function(){
-            realIndex = this.realIndex;
-            console.log(this.realIndex);
+            var real_index = this.realIndex;
+            console.log('real_index', real_index);
           },
           progress: function(progress) {
             for (let i = 0; i < this.slides.length; i++) {
@@ -110,12 +118,14 @@ export default {
   computed: {
     showSwiper () {
       return this.list.length
+    },
+    real_index () {
+      return this.$store.state.real_index;
     }
   },
   methods: {
     click_preview() {
-      console.log("这里", this.realIndex);
-      this.$emit('click_preview', realIndex)
+      this.$emit('click_preview', this.realIndex)
     },
     click_record() {
       this.$emit('click_record')

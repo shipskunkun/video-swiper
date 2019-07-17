@@ -8,8 +8,12 @@ export default new Vuex.Store({
     upload_add: "",
     current_step: 1,
     link: "",
+    real_index: 0
   },
   mutations: {
+    set_real_index(state, index){
+      state.real_index = index;
+    },
   	set_step(state, step){
   		state.current_step = step;
   	},
