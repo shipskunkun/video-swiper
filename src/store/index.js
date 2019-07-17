@@ -6,7 +6,7 @@ export default new Vuex.Store({
   state: {
     preview_add: "",
     upload_add: "",
-    current_step: 1,
+    current_step: 0,
     link: "",
     real_index: 0
   },

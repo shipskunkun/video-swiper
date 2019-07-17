@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <canvas id="video-canvas" ref="videoCanvas"></canvas>
-          <img src="../assets/record_1.png" class="out_time">lala</img>
+          <img src="../assets/record_1.png" class="out_time"></img>
           <img src="../assets/record_2.png" class="in_time">
           <div class="count_number" v-if="show_count_number">{{ count_number }}</div>
     </div>
@@ -24,6 +24,11 @@ export default {
       record_time: ""
     }
   },
+   computed: {
+      current_step() {
+        return this.$store.state.current_step
+      }
+    },
   methods: {
     beginRecord(url) {
       beginrecord(url).then(res => {
@@ -64,7 +69,7 @@ export default {
         var received_msg = evt.data;
         // 后端开始录制，开始倒计时
         if(this.start_record && received_msg) {
-            // this.countDown();
+            this.countDown();
             this.start_record = false;
             console.log('开始收到第一个信息', new Date().getTime());
         }
@@ -74,7 +79,7 @@ export default {
         } catch (err) {
           data = evt.data;
         }
-        console.log('转换后的data', data);
+        console.log('转换后的data', data, new Date().getTime());
 
         if(data.category == "record" && data.method == "complete") {
             console.log('录制完成', new Date().getTime());
@@ -90,16 +95,20 @@ export default {
 
         if (data.category == "upload" && data.method == "complete") {
           that.$store.commit('set_downlink', data.link);
+          ws.close();
+        }
+        // 首页、轮播页、预览页，不要联系
+        if(this.current_step == 0 ||  this.current_step == 1 || this.current_step == 2) {
+            ws.close();
         }
         heartCheck.reset();
       };
 
       ws.onclose = function() {
-        console.log("onclose", evnt);
-        if (evnt.code != 4500) {
+        // if (evnt.code != 4500) {
           //4500为服务端在打开多tab时主动关闭返回的编码
           // reconnect();//重连
-        }
+        // }
       };
     },
     countDown() {
@@ -114,13 +123,16 @@ export default {
       }, this.duration - 5)
     },
     beginPullVedio() {
+      var that = this;
       var canvas = document.getElementById('video-canvas');
       var url = 'ws://meeting-front.hunterslab.cn/live/';
       var player = new JSMpeg.Player(url, {
         canvas: canvas,
         loop: true,
         autoplay: true,
+        progressive: false,
         onPlay: function() {
+            this.on_play = true;
             console.log('onPlay', new Date().getTime());
         },
         onPause: function() {
@@ -132,14 +144,13 @@ export default {
         onStalled: function() {
             console.log('onStalled', new Date().getTime());
         },
-        onSourceEstablished: function() {
-            console.log('onSourceEstablished', new Date().getTime());
+        onSourceCompleted: function (player) {
+            console.log("Completed", new Date().getTime());
         },
         onSourceCompleted: function() {
             console.log('onSourceCompleted', new Date().getTime());
         }
       });
-       console.log("开始播视频", new Date().getTime());
     }
   },
   watch: {

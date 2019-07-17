@@ -51,17 +51,11 @@ export default {
     return {
       realIndex: 0,
       swiperOption: {
-        // slidesPerView: 3,
-        // spaceBetween: 30,
-        // slidesPerGroup: 3,
-        // loop: true,
-        // loopFillGroupWithBlank: true,
         watchSlidesProgress: true,
         slidesPerView: 'auto',
         centeredSlides: true,
         loop: true,
         loopedSlides: 5,
-        // autoplay: true,
         pagination: {
           el: '.swiper-pagination',
           clickable: true
