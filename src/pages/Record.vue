@@ -46,6 +46,7 @@ export default {
     beginPullProgress() {
       var that = this;
       var ws = new WebSocket('ws://meeting-front.hunterslab.cn/station/');
+      // var ws = new WebSocket('ws://localhost:2011');
       var heartCheck = {
         timeout: 1000,
         timeoutObj: null,
@@ -126,6 +127,9 @@ export default {
       var that = this;
       var canvas = document.getElementById('video-canvas');
       var url = 'ws://meeting-front.hunterslab.cn/live/';
+      // var url = 'ws://localhost:2012';
+
+
       var player = new JSMpeg.Player(url, {
         canvas: canvas,
         loop: true,
