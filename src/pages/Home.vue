@@ -35,18 +35,19 @@
           <img src="../assets/loading.gif"></img>
         </div>
 
-         <!--上传成功，显示二维码
+         <!--上传成功，显示二维码-->
         <div class="step_code" v-show="current_step == 5">
             <div class="code_image" id="qrcode">
+              <img :src="this.link"></img>
             </div>
             <div>
                 <p>扫描上方二维码可直接下载合成的视频</p>
                 <p>还请尽快下载，视频只能保存7日下载源</p>
             </div>
-        </div>-->
+        </div>
 
         <div class="back_bottom">
-          <img v-if="current_step == 1 || current_step == 6" src="../assets/back_home.png"  @click="backToCover">
+          <img v-if="current_step == 1 || current_step == 6 ||current_step == 5" src="../assets/back_home.png"  @click="backToCover">
           <img v-if="current_step ==2" src="../assets/exit_preview.png"  @click="backToHome">
         </div>
     </div>
@@ -181,7 +182,9 @@ export default {
         current_step(val) {
             // 生成二维码
             if(val == 4 && this.link) {
-              this.$router.push({name: 'Code'});
+              console.log(3);
+              this.$store.commit('set_step', 5);
+              // this.$router.push({name: 'Code'});
             }
         },
         preview_add(val) {
@@ -189,10 +192,14 @@ export default {
         },
         link(val) {
           if(val && this.current_step == 4) {
-            this.$router.push({name: 'Code'});
+            console.log(1);
+            this.$store.commit('set_step', 5)
+            // this.$router.push({name: 'Code'});
           }
           if( this.link && this.current_step == 4) {
-            this.$router.push({name: 'Code'});
+            console.log(2);
+            this.$store.commit('set_step', 5)
+            // this.$router.push({name: 'Code'});
           }
         }
     },
@@ -272,21 +279,29 @@ export default {
     }
   }
   .step_code {
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    .code_image {
-      margin-top: 2.87rem;
-      padding: 0.06rem;
-      background-color: #fff;
-      z-index: 88;
-    }
-    div:nth-child(2){
-      margin-top: 0.3rem;
-      color: rgba(0,42,38,1);
-      font-size: 0.24rem;
-    }
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      .code_image {
+        margin-top: 2.87rem;
+        width: 5.18rem;
+        height: 5.18rem;
+        padding: 0.36rem;
+        background-color: #fff;
+        z-index: 88;
+        border-radius: 0.2rem;
+        img {
+          width: 100%;
+          height: 100%;
+        }
+      }
+      div:nth-child(2){
+        line-height: 0.33rem;
+        margin-top: 0.3rem;
+        color: rgba(0,42,38,1);
+        font-size: 0.24rem;
+      }
   }
   .step_upload {
     position: fixed;
