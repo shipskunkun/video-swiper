@@ -6,13 +6,21 @@ export default new Vuex.Store({
   state: {
     preview_add: "",
     upload_add: "",
-    current_step: 5,
+    current_step: 0,
     link: "",
-    real_index: 0
+    current_index: 0,
+    current_video: {},
+    error_massage: ""
   },
   mutations: {
-    set_real_index(state, index){
-      state.real_index = index;
+    set_error(state, error) {
+      state.error_massage = error;
+    },
+    set_video(state, video){
+      state.current_video = video;
+    },
+    set_index(state, index){
+      state.current_index = index;
     },
   	set_step(state, step){
   		state.current_step = step;

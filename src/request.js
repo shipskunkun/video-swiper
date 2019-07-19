@@ -7,7 +7,7 @@ import QS from 'qs';
 //     axios.defaults.baseURL = 'http://meeting-front.hunterslab.cn';
 // } else if (process.env.NODE_ENV == 'debug'){
 //     axios.defaults.baseURL = '/api';
-// } else if (process.env.NODE_ENV == 'production') { 
+// } else if (process.env.NODE_ENV == 'production') {
 //     axios.defaults.baseURL = 'http://***********/';
 // }
 axios.defaults.baseURL = 'http://meeting-front.hunterslab.cn';

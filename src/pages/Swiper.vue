@@ -8,15 +8,10 @@
       <div class="swiper-pagination" slot="pagination"></div>
       <div class="swiper-button-prev" slot="button-prev"></div>
       <div class="swiper-button-next" slot="button-next"></div>
-
-      <!-- todo
-        <div class="time">0.48</div> -->
     </swiper>
-    <!-- <div class="time">0.48</div> -->
+
     <div class="operation">
       <img class="left" @click="click_preview" src="../assets/left_btn_2.png"><img class="right" @click="click_record" src="../assets/right_btn_2.png">
-      <!-- <img class="left" @click="click_preview">
-      <button class="left" @click="click_preview">预览</button><button class="right" @click="click_record">录制</button> -->
     </div>
     <div class="time" v-if="this.list[this.realIndex] && this.list[this.realIndex].duration ">{{ this.list[this.realIndex].duration | timefilter }}</div>
   </div>
@@ -72,6 +67,7 @@ export default {
         },
         on: {
           slideChangeTransitionEnd: function(){
+            self.$store.commit('set_index', this.realIndex);
             self.realIndex = this.realIndex;
             console.log('里面是真实的', this.realIndex);
           },
@@ -117,11 +113,10 @@ export default {
   },
   methods: {
     click_preview() {
-      console.log("传递出去的", this.realIndex);
-      this.$emit('click_preview', this.realIndex)
+      this.$emit('click_preview')
     },
     click_record() {
-      this.$emit('click_record')
+      this.$emit('click_record');
     }
   }
 }

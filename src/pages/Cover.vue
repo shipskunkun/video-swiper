@@ -19,7 +19,7 @@ export default {
     methods: {
         gotoHome(){
           this.$store.commit('set_step', 1);
-          this.$router.push({name: 'Home'});
+          this.$router.push({path: '/home'});
         }
     }
 }

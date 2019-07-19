@@ -16,10 +16,10 @@ export default {
   name: 'Record',
   data() {
     return {
-      duration: 0,
-      count_number: 5,
-      timeInterval: '',
-      show_count_number: false,
+      duration: 0, //视频长度
+      count_number: 5,  //倒计时从5开始
+      timeInterval: '',  //全局interval
+      show_count_number: false,  // 是否显示倒计时
       start_record: true,
       record_time: ""
     }
@@ -36,9 +36,8 @@ export default {
         if (res.status == 0) {
           this.beginPullVedio();
           //通知推送 WebSocket
-          this.beginPullProgress();
+          // this.beginPullProgress();
         }
-
       }).catch(err => {
         //提示错误
       })
@@ -68,12 +67,13 @@ export default {
       };
       ws.onmessage = function(evt) {
         var received_msg = evt.data;
-        // 后端开始录制，开始倒计时
+        /* 后端开始录制，开始倒计时
         if(this.start_record && received_msg) {
             this.countDown();
             this.start_record = false;
             console.log('开始收到第一个信息', new Date().getTime());
         }
+        */
         var data = evt.data;
         try {
           data = JSON.parse(evt.data);
@@ -82,23 +82,45 @@ export default {
         }
         console.log('转换后的data', data, new Date().getTime());
 
+        //失败
+        if(data.category == "record" && data.method == "failed") {
+            that.show_error_message('录制失败, 返回模板页');
+            ws.close();
+        }
+
+        if(data.category == "upload" && data.method == "failed") {
+            that.show_error_message('上传失败, 返回模板页');
+            ws.close();
+        }
+
+        if(data.category == "transcode" && data.method == "failed") {
+            that.show_error_message('转码失败, 返回模板页');
+            ws.close();
+        }
+
+
+        //录制完成，跳转到loading页面
         if(data.category == "record" && data.method == "complete") {
+            that.$store.commit('set_step', 4);
+            that.$router.push({ path: '/home?' +new Date()});
             console.log('录制完成', new Date().getTime());
         }
-        if (data.category == "transcode" && data.method == "complete") {
-          console.log("执行预览", new Date().getTime());
 
+        //转码完成，跳转到显示页面
+        if (data.category == "transcode" && data.method == "complete") {
           that.$store.commit('set_preview', data.preview);
           that.$store.commit('set_upload', data.path);
           that.$store.commit('set_step', 6);
-          that.$router.push({name: 'Home'})
+          that.$router.push({ path: '/home?' +new Date()});
         }
 
+        //点击完成录制
         if (data.category == "upload" && data.method == "complete") {
           that.$store.commit('set_downlink', data.link);
           ws.close();
         }
-        // 首页、轮播页、预览页，不要联系
+
+        // 首页、轮播页、预览页，断开连接
         if(this.current_step == 0 ||  this.current_step == 1 || this.current_step == 2) {
             ws.close();
         }
@@ -112,12 +134,26 @@ export default {
         // }
       };
     },
+    show_error_message(msg) {
+      this.$store.commit('set_step', 1);
+      that.$router.push({ path: '/home?' +new Date()});
+      this.$store.commit('set_error', msg);
+      setTimeout(()=> {
+        this.$store.commit('set_error', '');
+      }, 3000);
+    },
     countDown() {
       // 倒计时5 秒，后跳转到 loading 页面
       setTimeout(() => {
         // 视频时长 - 5 秒后，倒数
         this.timeInterval = setInterval(() => {
-          this.count_number--;
+          if(this.count_number > 0) {
+            this.count_number = this.count_number - 1;
+          }
+          else {
+            clearInterval(this.timeInterval);
+          }
+          console.log('我执行倒计时了', this.count_number);
         }, 1000);
         this.show_count_number = true;
 
@@ -129,14 +165,12 @@ export default {
       var url = 'ws://meeting-front.hunterslab.cn/live/';
       // var url = 'ws://localhost:2012';
 
-
       var player = new JSMpeg.Player(url, {
         canvas: canvas,
         loop: true,
         autoplay: true,
         progressive: false,
         onPlay: function() {
-            this.on_play = true;
             console.log('onPlay', new Date().getTime());
         },
         onPause: function() {
@@ -155,32 +189,30 @@ export default {
             console.log('onSourceCompleted', new Date().getTime());
         }
       });
+
+      this.countDown();
+      this.beginPullProgress();
+
     }
   },
   watch: {
+    /*没效果
     count_number(val) {
       if (val == 0) {
         clearInterval(this.timeInterval);
         this.$store.commit('set_step', 4);
-        this.$router.push({
-          name: 'Home'
-        });
+        this.$router.push({ path: '/home?' +new Date()});
       }
     }
+    */
   },
   mounted() {
-    // 视频地址
-    var data = "";
-    try {
-      data = JSON.parse(this.$route.params.message)
-    } catch (err) {
-      data = "";
-    }
-    console.log(data);
+    // 视频信息
+    var video = this.$store.state.current_video;
     //开始播放录制
-    this.beginRecord(data.file);
+    this.beginRecord(video.file);
     //倒计时
-    this.duration = data.duration;
+    this.duration = video.duration;
   }
 }
 </script>

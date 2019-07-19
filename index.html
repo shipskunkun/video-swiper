@@ -14,4 +14,11 @@
   <!-- built files will be auto injected -->
 </body>
 
+<script type="text/javascript">
+  window.addEventListener('load', function () {
+    if(location.href.split('#')[1]!=='/'){
+      location.replace(location.href.split('#')[0])
+    }
+  })
+</script>
 </html>

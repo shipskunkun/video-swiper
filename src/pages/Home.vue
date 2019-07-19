@@ -2,6 +2,7 @@
 <template>
     <div class="container">
         <div class="background-pic"></div>
+        <div v-if="error_massage" class="error_massage mask">{{ error_massage }}</div>
         <!--点击预览、录制前-->
         <template v-if="current_step == 1">
             <home-swiper :list="swiperList" @click_preview="clickPreview" @click_record="clickRecord"></home-swiper>
@@ -68,7 +69,6 @@ export default {
     },
     data() {
         return {
-            current_index: 0,
             buttonText: '返回首页',
             swiperList: []
         }
@@ -77,9 +77,7 @@ export default {
       timefilter(val) {
         var t = Math.floor(val/1000);
         var h = Math.floor(t / 3600);
-        if(h == 0) {
-          h = "";
-        }
+        if(h == 0) { h = ""; }
         else if(0<h<10) {
           h = '0'+Math.floor(t / 3600) + ":"
         }
@@ -114,6 +112,13 @@ export default {
       },
       upload_add() {
         return this.$store.state.upload_add
+      },
+      current_index () {
+        console.log('current_index变化', this.$store.state.current_index);
+        return this.$store.state.current_index;
+      },
+      error_massage() {
+        return this.$store.state.error_massage
       }
     },
     methods: {
@@ -161,15 +166,14 @@ export default {
               //提示错误
           })
         },
-        clickPreview(val) {
+        clickPreview() {
             this.$store.commit('set_step', 2)
-            // 当前是第几张
-            this.current_index = val;
+            // this.current_index = val;
         },
         clickRecord() {
-            var vedio_message = JSON.stringify(this.swiperList[this.current_index]);
-            this.$router.push({name: 'record',params: {message: vedio_message}})
-                    },
+            this.$store.commit('set_video', this.swiperList[this.current_index]);
+            this.$router.push({path: '/record'});
+        },
         getSwiperList() {
             getlist().then(res => {
                 this.swiperList = res.data || [];
@@ -184,7 +188,6 @@ export default {
             if(val == 4 && this.link) {
               console.log(3);
               this.$store.commit('set_step', 5);
-              // this.$router.push({name: 'Code'});
             }
         },
         preview_add(val) {
@@ -192,15 +195,16 @@ export default {
         },
         link(val) {
           if(val && this.current_step == 4) {
-            console.log(1);
+            console.log("监听link变化", 1);
             this.$store.commit('set_step', 5)
-            // this.$router.push({name: 'Code'});
           }
           if( this.link && this.current_step == 4) {
-            console.log(2);
+            console.log("监听link变化", 2);
             this.$store.commit('set_step', 5)
-            // this.$router.push({name: 'Code'});
           }
+        },
+        current_index (val) {
+            console.log('监听current_index', val);
         }
     },
     mounted() {
@@ -283,6 +287,7 @@ export default {
       display: flex;
       flex-direction: column;
       align-items: center;
+      margin-bottom: 0.65rem;
       .code_image {
         margin-top: 2.87rem;
         width: 5.18rem;
@@ -297,7 +302,6 @@ export default {
         }
       }
       div:nth-child(2){
-        line-height: 0.33rem;
         margin-top: 0.3rem;
         color: rgba(0,42,38,1);
         font-size: 0.24rem;
@@ -306,9 +310,9 @@ export default {
   .step_upload {
     position: fixed;
     top: 4.15rem;
-    width: 8rem;
+    width: 5.18rem;
     border-radius: 0.2rem;
-    height: 8rem;
+    height: 5.18rem;
     background-color: #fff;
     z-index: 2;
     display: flex;
@@ -319,6 +323,14 @@ export default {
         height: 100%;
         z-index: 3;
       }
+  }
+  .error_massage {
+    color: #fff;
+    font-size:1 rem;
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   .background-pic{
     background: url('~@/assets/bg.png') no-repeat center center;
