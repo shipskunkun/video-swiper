@@ -60,7 +60,6 @@ export function getlist() {
 }
 
 export function beginrecord(template_file) {
-    console.log(template_file);
     return request({
         method: 'Post',
         url: '/public/record/begin',

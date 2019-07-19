@@ -66,7 +66,8 @@ export default {
           prevEl: '.swiper-button-prev'
         },
         on: {
-          slideChangeTransitionEnd: function(){
+          // slideChangeTransitionEnd: function(){
+          transitionEnd: function(){
             self.$store.commit('set_index', this.realIndex);
             self.realIndex = this.realIndex;
             console.log('里面是真实的', this.realIndex);

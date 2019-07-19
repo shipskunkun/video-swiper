@@ -19,7 +19,7 @@ export default new Router({
     component: Cover
   },
   {
-    path: '/record/',
+    path: '/record',
     name: 'record',
     component: Record
   }],
