@@ -3,6 +3,7 @@
         <canvas id="video-canvas" ref="videoCanvas"></canvas>
           <img src="../assets/record_1.png" class="out_time"></img>
           <img src="../assets/record_2.png" class="in_time">
+          <div class="count_time" v-if="show_count_time">{{ count_time }}</div>
           <div class="count_number" v-if="show_count_number">{{ count_number }}</div>
     </div>
 </template>
@@ -20,8 +21,10 @@ export default {
       count_number: 5,  //倒计时从5开始
       timeInterval: '',  //全局interval
       show_count_number: false,  // 是否显示倒计时
+      show_count_time: false,  // 是否显示计时
       start_record: true,
-      record_time: ""
+      count_time: "",
+      timeInterval2: ""
     }
   },
    computed: {
@@ -57,6 +60,7 @@ export default {
           this.timeoutObj = setInterval(function() {
             if (ws.readyState == 1) {
               ws.send("HeartBeat");
+              console.log('执行发送数据');
             }
           }, this.timeout)
         }
@@ -66,14 +70,6 @@ export default {
         heartCheck.start();
       };
       ws.onmessage = function(evt) {
-        var received_msg = evt.data;
-        /* 后端开始录制，开始倒计时
-        if(this.start_record && received_msg) {
-            this.countDown();
-            this.start_record = false;
-            console.log('开始收到第一个信息', new Date().getTime());
-        }
-        */
         var data = evt.data;
         try {
           data = JSON.parse(evt.data);
@@ -103,7 +99,9 @@ export default {
         if(data.category == "record" && data.method == "complete") {
             that.$store.commit('set_step', 4);
             that.$router.push({ path: '/home'});
-            console.log('录制完成', new Date().getTime());
+            if(that.timeInterval2) {
+              that.clearInterval(that.timeInterval2);
+            }
         }
 
         //转码完成，跳转到显示页面
@@ -111,6 +109,9 @@ export default {
           that.$store.commit('set_preview', data.preview);
           that.$store.commit('set_upload', data.path);
           that.$store.commit('set_step', 6);
+          if(that.timeInterval2) {
+            that.clearInterval(that.timeInterval2);
+          }
           that.$router.push({ path: '/home'});
         }
 
@@ -120,10 +121,12 @@ export default {
           ws.close();
         }
 
+        console.log('current_step', that.current_step);
         // 首页、轮播页、预览页，断开连接
-        if(this.current_step == 0 ||  this.current_step == 1 || this.current_step == 2) {
+        if(that.current_step == 0 ||  that.current_step == 1 || that.current_step == 2) {
             ws.close();
         }
+
         heartCheck.reset();
       };
 
@@ -136,7 +139,7 @@ export default {
     },
     show_error_message(msg) {
       this.$store.commit('set_step', 1);
-      that.$router.push({ path: '/home'});
+      this.$router.push({ path: '/home'});
       this.$store.commit('set_error', msg);
       setTimeout(()=> {
         this.$store.commit('set_error', '');
@@ -157,7 +160,42 @@ export default {
         }, 1000);
         this.show_count_number = true;
 
-      }, this.duration - 5)
+      }, this.duration - 5);
+
+      //计时器
+      var n_sec = 0; //秒
+      var n_min = 0; //分
+      var n_hour = 0; //时
+      this.timeInterval2 = setInterval(()=>{
+
+        var str_sec = n_sec;
+        var str_min = n_min;
+        var str_hour = n_hour;
+        if ( n_sec < 10) {
+         str_sec = "0" + n_sec;
+        }
+        if ( n_min < 10 ) {
+         str_min = "0" + n_min;
+        }
+
+        if ( n_hour < 10 ) {
+         str_hour = "0" + n_hour;
+        }
+
+        this.count_time = str_hour + ":" + str_min + ":" + str_sec;
+        this.show_count_time = true;
+        n_sec++;
+        if (n_sec > 59){
+         n_sec = 0;
+         n_min++;
+        }
+        if (n_min > 59) {
+         n_sec = 0;
+         n_hour++;
+        }
+      }, 1000)
+
+
     },
     beginPullVedio() {
       var that = this;
@@ -207,6 +245,7 @@ export default {
     */
   },
   mounted() {
+    console.log("record mounted执行");
     // 视频信息
     var video = this.$store.state.current_video;
     //开始播放录制
@@ -253,6 +292,12 @@ export default {
       display: block;
       font-size: 5rem;
       color: #A0A0A0;
+    }
+    .count_time {
+      font-size: 0.26rem;
+      position: absolute;
+      bottom: 0.2rem;
+      left: 8.6rem;
     }
     .video-canvas {
       width: 100%;
