@@ -102,7 +102,7 @@ export default {
         //录制完成，跳转到loading页面
         if(data.category == "record" && data.method == "complete") {
             that.$store.commit('set_step', 4);
-            that.$router.push({ path: '/home?' +new Date()});
+            that.$router.push({ path: '/home'});
             console.log('录制完成', new Date().getTime());
         }
 
@@ -111,7 +111,7 @@ export default {
           that.$store.commit('set_preview', data.preview);
           that.$store.commit('set_upload', data.path);
           that.$store.commit('set_step', 6);
-          that.$router.push({ path: '/home?' +new Date()});
+          that.$router.push({ path: '/home'});
         }
 
         //点击完成录制
@@ -136,7 +136,7 @@ export default {
     },
     show_error_message(msg) {
       this.$store.commit('set_step', 1);
-      that.$router.push({ path: '/home?' +new Date()});
+      that.$router.push({ path: '/home'});
       this.$store.commit('set_error', msg);
       setTimeout(()=> {
         this.$store.commit('set_error', '');
@@ -201,7 +201,7 @@ export default {
       if (val == 0) {
         clearInterval(this.timeInterval);
         this.$store.commit('set_step', 4);
-        this.$router.push({ path: '/home?' +new Date()});
+        this.$router.push({ path: '/home'});
       }
     }
     */
