@@ -1,4 +1,4 @@
-<!--轮播页面1，预览2，全屏录制3，上传进度条4，预览合成6-->
+<!--轮播页面1，预览2，全屏录制3，loading上传进度条4，显示二维码5，预览合成6-->
 <template>
     <div class="container">
         <div class="background-pic"></div>
@@ -158,8 +158,13 @@ export default {
             console.log("global_link", this.link);
             //上传成功
             if(res.status == 0){
+              //此时还未生成链接，loading
               if(!this.link){
                 this.$store.commit('set_step', 4);
+              }
+              //生成，展示二维码
+              else {
+                this.$store.commit('set_step', 5);
               }
             }
           }).catch(err => {
@@ -172,6 +177,7 @@ export default {
         },
         clickRecord() {
             this.$store.commit('set_video', this.swiperList[this.current_index]);
+            this.$store.commit('set_step', 3);
             this.$router.push({path: '/record'});
         },
         getSwiperList() {

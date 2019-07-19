@@ -60,7 +60,6 @@ export default {
           this.timeoutObj = setInterval(function() {
             if (ws.readyState == 1) {
               ws.send("HeartBeat");
-              console.log('执行发送数据');
             }
           }, this.timeout)
         }
@@ -71,6 +70,7 @@ export default {
       };
       ws.onmessage = function(evt) {
         var data = evt.data;
+        heartCheck.reset();
         try {
           data = JSON.parse(evt.data);
         } catch (err) {
@@ -100,7 +100,7 @@ export default {
             that.$store.commit('set_step', 4);
             that.$router.push({ path: '/home'});
             if(that.timeInterval2) {
-              that.clearInterval(that.timeInterval2);
+              clearInterval(that.timeInterval2);
             }
         }
 
@@ -110,7 +110,7 @@ export default {
           that.$store.commit('set_upload', data.path);
           that.$store.commit('set_step', 6);
           if(that.timeInterval2) {
-            that.clearInterval(that.timeInterval2);
+            clearInterval(that.timeInterval2);
           }
           that.$router.push({ path: '/home'});
         }
@@ -121,13 +121,10 @@ export default {
           ws.close();
         }
 
-        console.log('current_step', that.current_step);
         // 首页、轮播页、预览页，断开连接
         if(that.current_step == 0 ||  that.current_step == 1 || that.current_step == 2) {
             ws.close();
         }
-
-        heartCheck.reset();
       };
 
       ws.onclose = function() {
