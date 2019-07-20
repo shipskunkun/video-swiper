@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container2">
       <div class="background-pic"></div>
       <div class="video">
         <canvas id="video-canvas" ref="videoCanvas"></canvas>
@@ -10,9 +10,16 @@
           <div class="count_end" v-if="show_count_end">{{ count_end }}</div>
       </div>
 
-        <div class="back_bottom">
-          <img src="../assets/back_home.png"  @click="backToCover">
-        </div>
+
+      <div class="template">
+        <video :src="video.url" controls="controls" ref="template_video">
+        </video>
+      </div>
+
+
+      <div class="back_bottom">
+        <img src="../assets/back_home.png"  @click="backToCover">
+      </div>
     </div>
 </template>
 
@@ -25,6 +32,7 @@ export default {
   name: 'Record',
   data() {
     return {
+      video: {},
       duration: 0, //视频长度
 
       count_start: '', //录制开始倒计时
@@ -101,10 +109,12 @@ export default {
             that.count_start = data.value;
         }
 
-        //录制倒计时结束后，才开始放视频
+        //录制倒计时结束后，才开始放视频，下面的视频也开始播放了
         if(data.category == "record" && data.method == "countdown" && !data.value) {
             that.countDown();
             that.beginPullVedio();
+            var video =  that.$refs.template_video;
+            video.play();
         }
 
         //失败
@@ -274,6 +284,7 @@ export default {
   mounted() {
     // 视频信息
     var video = this.$store.state.current_video;
+    this.video = this.$store.state.current_video;
     //开始播放录制
     this.beginRecord(video.file);
     //倒计时
@@ -283,12 +294,12 @@ export default {
 </script>
 
 <style lang="stylus" >
-.container {
+.container2 {
     position: relative;
     display: flex;
     justify-content: center;
     .background-pic{
-        background: url('~@/assets/bg.png') no-repeat center center;
+        background: url('~@/assets/bg2.png') no-repeat center center;
         background-size: 100% 100%;
         background-attachment: fixed;
         width: 100%;
@@ -301,12 +312,23 @@ export default {
         z-index:-999;
     }
 
+    .template {
+      width: 7.20rem;
+      height: 4.05rem;
+      margin-top: 5.2rem;
+      border-radius: .25rem;
+      video {
+        width: 100%;
+        height: 100%;
+        object-fit: fill;
+      }
+    }
     .video {
         position: fixed;
         background-color: #fff;
-        margin-top: 3.15rem;
-        width: 9.22rem;
-        height: 5.2rem;
+        margin-top: 0.8rem;
+        width: 7.20rem;
+        height: 4.05rem;
         border-radius: .25rem;
         display: flex;
         justify-content: center;
@@ -325,26 +347,24 @@ export default {
         }
         .count_end, .count_start {
             position: absolute;
-            bottom: 1.2rem;
-            width: 2.59rem;
-            height: 3.72rem;
+            bottom: 0.8rem;
             z-index: 999;
             display: block;
-            font-size: 4rem;
+            font-size: 3rem;
             color: #A0A0A0;
         }
         .count_time {
             font-size: 0.26rem;
             position: absolute;
-            bottom: 0.15rem;
-            left: 3.7rem;
+            bottom: 0.18rem;
+            left: 2.7rem;
         }
         .in_time {
             position: absolute;
             width: 0.4rem;
             height: 0.4rem;
-            bottom: 0.12rem;
-            left: 2.94rem;
+            bottom: 0.14rem;
+            left: 1.92rem;
         }
     }
     .back_bottom {
