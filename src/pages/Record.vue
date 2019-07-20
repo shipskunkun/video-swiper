@@ -5,8 +5,9 @@
         <canvas id="video-canvas" ref="videoCanvas"></canvas>
           <img src="../assets/record_1.png" class="out_time"></img>
           <img src="../assets/record_2.png" class="in_time">
+          <div class="count_start" v-if="show_count_start">{{ count_start }}</div>
           <div class="count_time" v-if="show_count_time">{{ count_time }}</div>
-          <div class="count_number" v-if="show_count_number">{{ count_number }}</div>
+          <div class="count_end" v-if="show_count_end">{{ count_end }}</div>
       </div>
 
         <div class="back_bottom">
@@ -25,14 +26,20 @@ export default {
   data() {
     return {
       duration: 0, //视频长度
+
       count_start: '', //录制开始倒计时
-      count_number: 5,  //倒计时从5开始
-      timeInterval: '',  //全局interval
-      show_count_number: false,  // 是否显示倒计时
-      show_count_time: false,  // 是否显示计时
-      start_record: true,
-      count_time: "",
+      count_end: 5,  //倒计时从5开始
+      count_time: "00:00:00", //计时
+
+      timeInterval: '',  //倒计时interval
       timeInterval2: "",  //计时器
+      timeInterval3: "",  //开始计时器
+
+      show_count_start: false,  //是否显示开始倒计时
+      show_count_end: false,  // 是否显示倒计时
+      show_count_time: false,  // 是否显示计时
+
+      start_record: true,
       complete_record: false
     }
   },
@@ -49,7 +56,6 @@ export default {
       beginrecord(url).then(res => {
         //开始录制成功
         if (res.status == 0) {
-          this.beginPullVedio();
           //通知推送 WebSocket
           this.beginPullProgress();
         }
@@ -58,7 +64,6 @@ export default {
       })
     },
     beginPullProgress() {
-      console.log('beginPullProgress', new Date().getTime());
       var that = this;
       var ws = new WebSocket('ws://meeting-front.hunterslab.cn/station/');
       // var ws = new WebSocket('ws://localhost:2011');
@@ -78,7 +83,6 @@ export default {
         }
       };
       ws.onopen = function() {
-        console.log('onopen', new Date().getTime());
         heartCheck.start();
       };
       ws.onmessage = function(evt) {
@@ -92,8 +96,16 @@ export default {
         console.log('转换后的data', data, new Date().getTime());
 
         //倒计时5秒，接受才开始录制
+        if(data.category == "record" && data.method == "countdown"){
+            that.show_count_start = !! data.value;
+            that.count_start = data.value;
+        }
 
-
+        //录制倒计时结束后，才开始放视频
+        if(data.category == "record" && data.method == "countdown" && !data.value) {
+            that.countDown();
+            that.beginPullVedio();
+        }
 
         //失败
         if(data.category == "record" && data.method == "failed") {
@@ -112,9 +124,16 @@ export default {
         }
 
 
-        //录制完成，
+        //录制完成，结束计时，跳转至 loading页面
         if(data.category == "record" && data.method == "complete") {
             that.complete_record = true;
+            if(that.count_end == -1) {
+                that.$store.commit('set_step', 4);
+                that.$router.push({ path: '/home'});
+                if(that.timeInterval2) {
+                  clearInterval(that.timeInterval2);
+                }
+            }
         }
 
         //转码完成，跳转到显示页面
@@ -156,29 +175,12 @@ export default {
       }, 3000);
     },
     countDown() {
-      console.log('开始倒计时和录制', new Date().getTime());
-      // 倒计时5 秒，后跳转到 loading 页面
-      setTimeout(() => {
-        // 视频时长 - 5 秒后，倒数
-        this.timeInterval = setInterval(() => {
-          if(this.count_number > 0) {
-            this.show_count_number = true;
-            this.count_number = this.count_number - 1;
-          }
-          else {
-            clearInterval(this.timeInterval);
-            // this.show_count_number = false;
-          }
-          console.log('我执行倒计时了', this.count_number);
-        }, 1000);
-      }, this.duration - 5);
-
       //计时器
       var n_sec = 0; //秒
       var n_min = 0; //分
       var n_hour = 0; //时
+      this.show_count_time = true;
       this.timeInterval2 = setInterval(()=>{
-
         var str_sec = n_sec;
         var str_min = n_min;
         var str_hour = n_hour;
@@ -193,8 +195,6 @@ export default {
          str_hour = "0" + n_hour;
         }
 
-        this.count_time = str_hour + ":" + str_min + ":" + str_sec;
-        this.show_count_time = true;
         n_sec++;
         if (n_sec > 59){
          n_sec = 0;
@@ -204,8 +204,24 @@ export default {
          n_sec = 0;
          n_hour++;
         }
+        this.count_time = str_hour + ":" + str_min + ":" + str_sec;
       }, 1000)
 
+
+      // 倒计时5 秒，后跳转到 loading 页面
+      setTimeout(() => {
+        // 视频时长 - 5 秒后，倒数
+        this.show_count_end = true;
+        this.timeInterval = setInterval(() => {
+          if(this.count_end >= 0) {
+            this.count_end = this.count_end - 1;
+          }
+          else {
+            clearInterval(this.timeInterval);
+            this.show_count_end = false;
+          }
+        }, 1000);
+      }, this.duration - 4000);
 
     },
     beginPullVedio() {
@@ -239,15 +255,14 @@ export default {
         }
       });
 
-      this.countDown();
-      this.beginPullProgress();
-
+      // 开始计时、开始准备结束播放倒计时
+      // this.countDown();
     }
   },
   watch: {
-    count_number(val) {
+    count_end(val) {
       console.log('监听count_number', val);
-      if (val == 0) {
+      if (val == -1   && this.complete_record) {
         this.$store.commit('set_step', 4);
         this.$router.push({ path: '/home'});
         if(this.timeInterval2) {
@@ -257,7 +272,6 @@ export default {
     }
   },
   mounted() {
-    console.log("record mounted执行");
     // 视频信息
     var video = this.$store.state.current_video;
     //开始播放录制
@@ -291,8 +305,8 @@ export default {
         position: fixed;
         background-color: #fff;
         margin-top: 3.15rem;
-        width: 11rem;
-        height: 6.2rem;
+        width: 9.22rem;
+        height: 5.2rem;
         border-radius: .25rem;
         display: flex;
         justify-content: center;
@@ -309,9 +323,9 @@ export default {
             z-index: 999;
             display: block;
         }
-        .count_number {
+        .count_end, .count_start {
             position: absolute;
-            bottom: 1.8rem;
+            bottom: 1.2rem;
             width: 2.59rem;
             height: 3.72rem;
             z-index: 999;
@@ -322,15 +336,15 @@ export default {
         .count_time {
             font-size: 0.26rem;
             position: absolute;
-            bottom: 0.2rem;
-            left: 4.425rem;
+            bottom: 0.15rem;
+            left: 3.7rem;
         }
         .in_time {
             position: absolute;
             width: 0.4rem;
             height: 0.4rem;
-            bottom: 0.135rem;
-            left: 3.83rem;
+            bottom: 0.12rem;
+            left: 2.94rem;
         }
     }
     .back_bottom {

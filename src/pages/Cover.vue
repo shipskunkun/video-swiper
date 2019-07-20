@@ -21,7 +21,13 @@ export default {
           this.$store.commit('set_step', 1);
           this.$router.push({path: '/home'});
         }
-    }
+    },
+    beforeRouteEnter (to, from, next) {
+      if(from.path != '/') {
+        location.reload();
+      }
+      next();
+    },
 }
 </script>
 
