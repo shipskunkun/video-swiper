@@ -167,7 +167,7 @@ export default {
           }
           else {
             clearInterval(this.timeInterval);
-            this.show_count_number = false;
+            // this.show_count_number = false;
           }
           console.log('我执行倒计时了', this.count_number);
         }, 1000);
@@ -291,13 +291,16 @@ export default {
         position: fixed;
         background-color: #fff;
         margin-top: 3.15rem;
-        width: 10rem;
-        height: 5.64rem;
+        width: 11rem;
+        height: 6.2rem;
         border-radius: .25rem;
-        .video-canvas {
-            width: 100%;
-            height: 100%;
-        }
+        display: flex;
+        justify-content: center;
+        #video-canvas {
+           width: 100%;
+           height: 100%;
+           object-fit: fill;
+          }
         .out_time {
             position: absolute;
             bottom: 0;
@@ -308,26 +311,26 @@ export default {
         }
         .count_number {
             position: absolute;
-            bottom: 3.54rem;
+            bottom: 1.8rem;
             width: 2.59rem;
             height: 3.72rem;
             z-index: 999;
             display: block;
-            font-size: 5rem;
+            font-size: 4rem;
             color: #A0A0A0;
         }
         .count_time {
             font-size: 0.26rem;
             position: absolute;
             bottom: 0.2rem;
-            left: 8.6rem;
+            left: 4.425rem;
         }
         .in_time {
             position: absolute;
             width: 0.4rem;
             height: 0.4rem;
             bottom: 0.135rem;
-            left: 7.925rem;
+            left: 3.83rem;
         }
     }
     .back_bottom {
