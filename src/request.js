@@ -10,8 +10,8 @@ import QS from 'qs';
 // } else if (process.env.NODE_ENV == 'production') {
 //     axios.defaults.baseURL = 'http://***********/';
 // }
-// axios.defaults.baseURL = 'http://meeting-front.hunterslab.cn';
-axios.defaults.baseURL = 'http://localhost:2010';
+axios.defaults.baseURL = 'http://meeting-front.hunterslab.cn';
+// axios.defaults.baseURL = 'http://localhost:2010';
 
 //设置超时时间
 axios.defaults.timeout = 10000;

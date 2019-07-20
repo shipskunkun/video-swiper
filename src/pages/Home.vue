@@ -1,4 +1,4 @@
-<!--轮播页面1，预览2，全屏录制3，loading上传进度条4，显示二维码5，预览合成6-->
+<!--轮播页面1，预览2，全屏录制3，loading上传进度条4，预览合成6, 显示二维码5-->
 <template>
     <div class="container">
         <div class="background-pic"></div>
@@ -22,7 +22,7 @@
         <template v-if="current_step == 6">
           <div class="mask"></div>
           <div class="vedio">
-            <video :src="preview_add" controls="controls" ref="preview_video">
+            <video :src="preview_add" controls="controls" ref="preview_video" autoplay>
             </video>
             <div class="two_button">
               <img @click="button_left" src="../assets/left_btn_1.png"><img @click="button_right" src="../assets/right_btn_1.png">
@@ -194,6 +194,12 @@ export default {
             if(val == 4 && this.link) {
               console.log(3);
               this.$store.commit('set_step', 5);
+            }
+            //如果是5，出现二维码，120秒后不操作返回首页
+            if(val == 5){
+              setTimeout(()=> {
+                this.$router.push({path: '/'});
+              }, 120000)
             }
         },
         preview_add(val) {

@@ -1,10 +1,17 @@
 <template>
     <div class="container">
+      <div class="background-pic"></div>
+      <div class="video">
         <canvas id="video-canvas" ref="videoCanvas"></canvas>
           <img src="../assets/record_1.png" class="out_time"></img>
           <img src="../assets/record_2.png" class="in_time">
           <div class="count_time" v-if="show_count_time">{{ count_time }}</div>
           <div class="count_number" v-if="show_count_number">{{ count_number }}</div>
+      </div>
+
+        <div class="back_bottom">
+          <img src="../assets/back_home.png"  @click="backToCover">
+        </div>
     </div>
 </template>
 
@@ -18,13 +25,15 @@ export default {
   data() {
     return {
       duration: 0, //视频长度
+      count_start: '', //录制开始倒计时
       count_number: 5,  //倒计时从5开始
       timeInterval: '',  //全局interval
       show_count_number: false,  // 是否显示倒计时
       show_count_time: false,  // 是否显示计时
       start_record: true,
       count_time: "",
-      timeInterval2: ""
+      timeInterval2: "",  //计时器
+      complete_record: false
     }
   },
    computed: {
@@ -33,22 +42,26 @@ export default {
       }
     },
   methods: {
+    backToCover() {
+      this.$router.push({path: '/'});
+    },
     beginRecord(url) {
       beginrecord(url).then(res => {
         //开始录制成功
         if (res.status == 0) {
           this.beginPullVedio();
           //通知推送 WebSocket
-          // this.beginPullProgress();
+          this.beginPullProgress();
         }
       }).catch(err => {
         //提示错误
       })
     },
     beginPullProgress() {
+      console.log('beginPullProgress', new Date().getTime());
       var that = this;
-      // var ws = new WebSocket('ws://meeting-front.hunterslab.cn/station/');
-      var ws = new WebSocket('ws://localhost:2011');
+      var ws = new WebSocket('ws://meeting-front.hunterslab.cn/station/');
+      // var ws = new WebSocket('ws://localhost:2011');
       var heartCheck = {
         timeout: 1000,
         timeoutObj: null,
@@ -78,6 +91,10 @@ export default {
         }
         console.log('转换后的data', data, new Date().getTime());
 
+        //倒计时5秒，接受才开始录制
+
+
+
         //失败
         if(data.category == "record" && data.method == "failed") {
             that.show_error_message('录制失败, 返回模板页');
@@ -95,13 +112,9 @@ export default {
         }
 
 
-        //录制完成，跳转到loading页面
+        //录制完成，
         if(data.category == "record" && data.method == "complete") {
-            that.$store.commit('set_step', 4);
-            that.$router.push({ path: '/home'});
-            if(that.timeInterval2) {
-              clearInterval(that.timeInterval2);
-            }
+            that.complete_record = true;
         }
 
         //转码完成，跳转到显示页面
@@ -143,20 +156,21 @@ export default {
       }, 3000);
     },
     countDown() {
+      console.log('开始倒计时和录制', new Date().getTime());
       // 倒计时5 秒，后跳转到 loading 页面
       setTimeout(() => {
         // 视频时长 - 5 秒后，倒数
         this.timeInterval = setInterval(() => {
           if(this.count_number > 0) {
+            this.show_count_number = true;
             this.count_number = this.count_number - 1;
           }
           else {
             clearInterval(this.timeInterval);
+            this.show_count_number = false;
           }
           console.log('我执行倒计时了', this.count_number);
         }, 1000);
-        this.show_count_number = true;
-
       }, this.duration - 5);
 
       //计时器
@@ -197,8 +211,8 @@ export default {
     beginPullVedio() {
       var that = this;
       var canvas = document.getElementById('video-canvas');
-      // var url = 'ws://meeting-front.hunterslab.cn/live/';
-      var url = 'ws://localhost:2012';
+      var url = 'ws://meeting-front.hunterslab.cn/live/';
+      // var url = 'ws://localhost:2012';
 
       var player = new JSMpeg.Player(url, {
         canvas: canvas,
@@ -231,15 +245,16 @@ export default {
     }
   },
   watch: {
-    /*没效果
     count_number(val) {
+      console.log('监听count_number', val);
       if (val == 0) {
-        clearInterval(this.timeInterval);
         this.$store.commit('set_step', 4);
         this.$router.push({ path: '/home'});
+        if(this.timeInterval2) {
+          clearInterval(this.timeInterval2);
+        }
       }
     }
-    */
   },
   mounted() {
     console.log("record mounted执行");
@@ -254,58 +269,74 @@ export default {
 </script>
 
 <style lang="stylus" >
-  .background-pic{
-    background: url('~@/assets/bg.png') no-repeat center center;
-    // background-size:cover;
-    background-size: 100% 100%;
-    background-attachment: fixed;
-    width: 100%;
-    height: 100%;
-    position: fixed;
-    top:0;
-    left:0;
-    right:0;
-    bottom:0;
-    z-index: -999;
-}
 .container {
     position: relative;
     display: flex;
     justify-content: center;
-    .out_time {
-      position: absolute;
-      bottom: 0;
-      width: 4.8rem;
-      height: 0.7rem;
-      z-index: 999;
-      display: block;
+    .background-pic{
+        background: url('~@/assets/bg.png') no-repeat center center;
+        background-size: 100% 100%;
+        background-attachment: fixed;
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        top:0;
+        left:0;
+        right:0;
+        bottom:0;
+        z-index:-999;
     }
-    .count_number {
-      position: absolute;
-      bottom: 3.54rem;
-      width: 2.59rem;
-      height: 3.72rem;
-      z-index: 999;
-      display: block;
-      font-size: 5rem;
-      color: #A0A0A0;
+
+    .video {
+        position: fixed;
+        background-color: #fff;
+        margin-top: 3.15rem;
+        width: 10rem;
+        height: 5.64rem;
+        border-radius: .25rem;
+        .video-canvas {
+            width: 100%;
+            height: 100%;
+        }
+        .out_time {
+            position: absolute;
+            bottom: 0;
+            width: 4.8rem;
+            height: 0.7rem;
+            z-index: 999;
+            display: block;
+        }
+        .count_number {
+            position: absolute;
+            bottom: 3.54rem;
+            width: 2.59rem;
+            height: 3.72rem;
+            z-index: 999;
+            display: block;
+            font-size: 5rem;
+            color: #A0A0A0;
+        }
+        .count_time {
+            font-size: 0.26rem;
+            position: absolute;
+            bottom: 0.2rem;
+            left: 8.6rem;
+        }
+        .in_time {
+            position: absolute;
+            width: 0.4rem;
+            height: 0.4rem;
+            bottom: 0.135rem;
+            left: 7.925rem;
+        }
     }
-    .count_time {
-      font-size: 0.26rem;
-      position: absolute;
-      bottom: 0.2rem;
-      left: 8.6rem;
-    }
-    .video-canvas {
-      width: 100%;
-      height: 100%;
-    }
-    .in_time {
-      position: absolute;
-      width: 0.4rem;
-      height: 0.4rem;
-      bottom: 0.135rem;
-      left: 7.925rem;
+    .back_bottom {
+        position: fixed;
+        bottom: 0.67rem;
+        img {
+          width: 2rem;
+          height: 0.5rem;
+        }
     }
 }
 </style>
