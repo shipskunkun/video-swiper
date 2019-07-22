@@ -189,7 +189,10 @@ export default {
         }
     },
     watch: {
-        current_step(val) {
+        current_step(val, oldval) {
+            if(val!=oldval) {
+              this.getSwiperList();
+            }
             // 生成二维码
             if(val == 4 && this.link) {
               console.log(3);
