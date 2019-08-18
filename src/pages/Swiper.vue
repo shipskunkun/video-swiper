@@ -43,6 +43,7 @@ export default {
   },
   data () {
     const self = this;
+    var length = self.showSwiper;
     return {
       realIndex: 0,
       swiperOption: {
@@ -55,7 +56,7 @@ export default {
         slidesPerView: 'auto',
         centeredSlides: true,
         loop: true,
-        loopedSlides: 5,
+        loopedSlides: length,
         // autoplay: true,
         pagination: {
           el: '.swiper-pagination',
@@ -71,6 +72,7 @@ export default {
             self.$store.commit('set_index', this.realIndex);
             self.realIndex = this.realIndex;
             console.log('里面是真实的', this.realIndex);
+            console.log('能拿到长度吗', self.showSwiper);
           },
           progress: function(progress) {
             for (let i = 0; i < this.slides.length; i++) {
