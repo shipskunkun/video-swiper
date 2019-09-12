@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container2">
       <div class="background-pic"></div>
       <div class="video">
         <canvas id="video-canvas" ref="videoCanvas"></canvas>
@@ -10,9 +10,16 @@
           <div class="count_end" v-if="show_count_end">{{ count_end }}</div>
       </div>
 
-        <div class="back_bottom">
-          <img src="../assets/back_home.png"  @click="backToCover">
-        </div>
+
+      <div class="template">
+        <video :src="video.url" controls="controls" ref="template_video">
+        </video>
+      </div>
+
+
+      <div class="back_bottom">
+        <img src="../assets/back_home.png"  @click="backToCover">
+      </div>
     </div>
 </template>
 
@@ -20,20 +27,26 @@
 import HomeSwiper from './Swiper'
 import axios from 'axios'
 import { beginrecord, getWebsocket  } from '@/testServer.js'
+
 export default {
   name: 'Record',
   data() {
     return {
+      video: {},
       duration: 0, //视频长度
+
       count_start: '', //录制开始倒计时
       count_end: 5,  //倒计时从5开始
       count_time: "00:00:00", //计时
+
       timeInterval: '',  //倒计时interval
       timeInterval2: "",  //计时器
       timeInterval3: "",  //开始计时器
+
       show_count_start: false,  //是否显示开始倒计时
       show_count_end: false,  // 是否显示倒计时
       show_count_time: false,  // 是否显示计时
+
       start_record: true,
       complete_record: false
     }
@@ -89,29 +102,38 @@ export default {
           data = evt.data;
         }
         console.log('转换后的data', data, new Date().getTime());
+
         //倒计时5秒，接受才开始录制
         if(data.category == "record" && data.method == "countdown"){
             that.show_count_start = !! data.value;
             that.count_start = data.value;
         }
-        //录制倒计时结束后，才开始放视频
+
+        //录制倒计时结束后，才开始放视频，下面的视频也开始播放了
         if(data.category == "record" && data.method == "countdown" && !data.value) {
             that.countDown();
             that.beginPullVedio();
+            var video =  that.$refs.template_video;
+            video.play();
         }
+
         //失败
         if(data.category == "record" && data.method == "failed") {
             that.show_error_message('录制失败, 返回模板页');
             ws.close();
         }
+
         if(data.category == "upload" && data.method == "failed") {
             that.show_error_message('上传失败, 返回模板页');
             ws.close();
         }
+
         if(data.category == "transcode" && data.method == "failed") {
             that.show_error_message('转码失败, 返回模板页');
             ws.close();
         }
+
+
         //录制完成，结束计时，跳转至 loading页面
         if(data.category == "record" && data.method == "complete") {
             that.complete_record = true;
@@ -123,6 +145,7 @@ export default {
                 }
             }
         }
+
         //转码完成，跳转到显示页面
         if (data.category == "transcode" && data.method == "complete") {
           that.$store.commit('set_preview', data.preview);
@@ -133,16 +156,19 @@ export default {
           }
           that.$router.push({ path: '/home'});
         }
+
         //点击完成录制
         if (data.category == "upload" && data.method == "complete") {
           that.$store.commit('set_downlink', data.link);
           ws.close();
         }
+
         // 首页、轮播页、预览页，断开连接
         if(that.current_step == 0 ||  that.current_step == 1 || that.current_step == 2) {
             ws.close();
         }
       };
+
       ws.onclose = function() {
         // if (evnt.code != 4500) {
           //4500为服务端在打开多tab时主动关闭返回的编码
@@ -174,9 +200,11 @@ export default {
         if ( n_min < 10 ) {
          str_min = "0" + n_min;
         }
+
         if ( n_hour < 10 ) {
          str_hour = "0" + n_hour;
         }
+
         n_sec++;
         if (n_sec > 59){
          n_sec = 0;
@@ -188,6 +216,8 @@ export default {
         }
         this.count_time = str_hour + ":" + str_min + ":" + str_sec;
       }, 1000)
+
+
       // 倒计时5 秒，后跳转到 loading 页面
       setTimeout(() => {
         // 视频时长 - 5 秒后，倒数
@@ -202,12 +232,14 @@ export default {
           }
         }, 1000);
       }, this.duration - 4000);
+
     },
     beginPullVedio() {
       var that = this;
       var canvas = document.getElementById('video-canvas');
       // var url = 'ws://meeting-front.hunterslab.cn/live/';
       var url = 'ws://localhost:2012';
+
       var player = new JSMpeg.Player(url, {
         canvas: canvas,
         loop: true,
@@ -232,6 +264,7 @@ export default {
             console.log('onSourceCompleted', new Date().getTime());
         }
       });
+
       // 开始计时、开始准备结束播放倒计时
       // this.countDown();
     }
@@ -251,6 +284,7 @@ export default {
   mounted() {
     // 视频信息
     var video = this.$store.state.current_video;
+    this.video = this.$store.state.current_video;
     //开始播放录制
     this.beginRecord(video.file);
     //倒计时
@@ -260,12 +294,12 @@ export default {
 </script>
 
 <style lang="stylus" >
-.container {
+.container2 {
     position: relative;
     display: flex;
     justify-content: center;
     .background-pic{
-        background: url('~@/assets/bg.png') no-repeat center center;
+        background: url('~@/assets/bg2.png') no-repeat center center;
         background-size: 100% 100%;
         background-attachment: fixed;
         width: 100%;
@@ -277,12 +311,24 @@ export default {
         bottom:0;
         z-index:-999;
     }
+
+    .template {
+      width: 7.20rem;
+      height: 4.05rem;
+      margin-top: 5.2rem;
+      border-radius: .25rem;
+      video {
+        width: 100%;
+        height: 100%;
+        object-fit: fill;
+      }
+    }
     .video {
         position: fixed;
         background-color: #fff;
-        margin-top: 3.15rem;
-        width: 9.22rem;
-        height: 5.2rem;
+        margin-top: 0.8rem;
+        width: 7.20rem;
+        height: 4.05rem;
         border-radius: .25rem;
         display: flex;
         justify-content: center;
@@ -301,26 +347,24 @@ export default {
         }
         .count_end, .count_start {
             position: absolute;
-            bottom: 1.2rem;
-            width: 2.59rem;
-            height: 3.72rem;
+            bottom: 0.8rem;
             z-index: 999;
             display: block;
-            font-size: 4rem;
+            font-size: 3rem;
             color: #A0A0A0;
         }
         .count_time {
             font-size: 0.26rem;
             position: absolute;
-            bottom: 0.15rem;
-            left: 3.7rem;
+            bottom: 0.18rem;
+            left: 2.7rem;
         }
         .in_time {
             position: absolute;
             width: 0.4rem;
             height: 0.4rem;
-            bottom: 0.12rem;
-            left: 2.94rem;
+            bottom: 0.14rem;
+            left: 1.92rem;
         }
     }
     .back_bottom {
