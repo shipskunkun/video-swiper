@@ -73,8 +73,8 @@ export default {
     },
     beginPullProgress() {
       var that = this;
-      // var ws = new WebSocket('ws://meeting-front.hunterslab.cn/station/');
-      var ws = new WebSocket('ws://localhost:2011');
+      var ws = new WebSocket('ws://meeting-front.hunterslab.cn/station/');
+      // var ws = new WebSocket('ws://localhost:2011');
       var heartCheck = {
         timeout: 1000,
         timeoutObj: null,

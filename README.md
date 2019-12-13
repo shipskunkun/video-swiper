@@ -1,11 +1,15 @@
-> [掘金专栏](https://juejin.im/post/5be54e04f265da611c267b19)
+> [掘金专栏](https://juejin.im/user/59351d4ea0bb9f0058e7f6eb)
+> [segmentfault](https://segmentfault.com/u/shipskunkun)
+> [个人博客](https://www.cnblogs.com/shipskunkun/)
 
-> [segmentfault](https://segmentfault.com/a/1190000017003057#articleHeader0)
+# [视频轮播项目总结 （上）]()
+# [运行]
+	```
+	sudo npm install
+	sudo npm run dev
+	```
 
-> [个人博客](http://www.ptuyxr.cn/)
 
-# [用Vue开发仿旅游站webapp项目总结 （上）](https://juejin.im/post/5be54e04f265da611c267b19)
-# [用Vue开发仿旅游站webapp项目总结 （下）](https://juejin.im/post/5bec0eeef265da61193b65cd)
+# [其他]
 
-
-
+[如何用Mac自带的QuickTime Player录制视频并制作GIF动图](https://www.jianshu.com/p/bf3532bbc208)
