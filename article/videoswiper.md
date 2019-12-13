@@ -170,4 +170,12 @@ https://www.cnblogs.com/JerryMouseLi/archive/2019/06/04/10975066.html
 
  
 https://github.com/phoboslab/jsmpeg  
-播放录制的视频流前端组件
+播放录制的视频流前端组件   
+在canvas中，
+
+
+
+
+
+QRCode，前端根据链接生成二维码
+
