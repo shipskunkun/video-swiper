@@ -2,12 +2,12 @@
 > [segmentfault](https://segmentfault.com/u/shipskunkun)
 > [个人博客](https://www.cnblogs.com/shipskunkun/)
 
-# [视频轮播项目总结 （上）]()
+
 # [运行]
-	```
+
 	sudo npm install
 	sudo npm run dev
-	```
+
 
 
 # [其他]
